@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <!--<bean id="simpleUrlMapping"-->
+          <!--class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">-->
+        <!--<property name="mappings">-->
+            <!--<props>-->
+                <!--<prop key="/userList">simpleController</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer"-->
+          <!--p:templateLoaderPath="/WEB-INF/ftl"-->
+          <!--p:defaultEncoding="UTF-8"-->
+
+    <!--&gt;-->
+
+        <!--<property name="freemarkerSettings">-->
+            <!--<props>-->
+                <!--<prop key="classic_compatible">true</prop>-->
+            <!--</props>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; 扫描类包，将标注Spring注解的类自动转化Bean，同时完成Bean的注入 &ndash;&gt;-->
+    <context:component-scan base-package="com.jessin.practice.controller">
+    </context:component-scan>
+
+    <!--<util:properties id="config" location="classpath:test.properties" />-->
+    <!--&lt;!&ndash; properties文件放在mvc里面，@Value("${name}")才能起作用&ndash;&gt;-->
+
+
+    <!--<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"-->
+          <!--p:order="5"-->
+          <!--p:suffix=".ftl"-->
+          <!--p:contentType="text/html; charset=utf-8"-->
+    <!--/>-->
+    <!--&lt;!&ndash; 配置视图解析器，将ModelAndView及字符串解析为具体的页面，即逻辑视图名转化为/WEB-INF/views/逻辑视图名.jsp &ndash;&gt;-->
+    <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"-->
+          <!--p:viewClass="org.springframework.web.servlet.view.JstlView"-->
+          <!--p:prefix="/WEB-INF/views/"-->
+          <!--p:suffix=".jsp"-->
+    <!--/>-->
+    <!-- 需要这一个配置，使得下面的json配置有效-->
+    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>-->
+
+    <!-- 主要是注入messageConverter -->
+     <!--完成JSON格式数据的自动转换-->
+    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
+        <!--<property name="messageConverters">-->
+            <!--<list>-->
+                <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
+                    <!--<property name="objectMapper">-->
+                        <!--<bean class="com.fasterxml.jackson.databind.ObjectMapper">-->
+                            <!--<property name="serializationInclusion">-->
+                                <!--<value type="com.fasterxml.jackson.annotation.JsonInclude$Include">NON_NULL</value>-->
+                            <!--</property>-->
+                        <!--</bean>-->
+                    <!--</property>-->
+                <!--</bean>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+    <!--<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter">-->
+    <!--</bean>-->
+    <mvc:annotation-driven>
+        <!-- 这里是添加，其实已经有了这个converter，但是位于列表的最后，这里再加一个相同的，但是放在前面 -->
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- PropertyPlaceholderConfigurer是一个BeanFactoryPostProcessor，只在该容器中起作用，不可继承-->
+    <context:property-placeholder location="classpath*:/test.properties" />
+</beans>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:contetxt="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+
+    <context:component-scan base-package="com.jessin.practice.bean,com.jessin.practice.service,
+com.jessin.practice.bean,com.jessin.practice.listener">
+    </context:component-scan>
+    <!-- PropertyPlaceholderConfigurer是一个BeanFactoryPostProcessor，只在该容器中起作用，不可继承-->
+    <context:property-placeholder location="classpath*:/test.properties" />
+    <bean id="friend" class="com.jessin.practice.bean.Friend">
+        <property name="id" value="1"></property>
+        <property name="name" value="小妹"/>
+        <property name="user" ref="user"/>
+    </bean>
+
+    <alias name="friend" alias="goodFriend"></alias>
+
+    <!--<bean id="applicationEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster">-->
+        <!--<property name="taskExecutor" ref="executor"/>-->
+    <!--</bean>-->
+
+    <!-- http://docs.spring.io/spring/docs/current/spring-framework-reference/html/scheduling.html -->
+    <task:executor id="executor" pool-size="50-100" queue-capacity="1600" keep-alive="120"/>
+    <task:annotation-driven executor="executor" />
+</beans>
