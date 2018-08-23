@@ -3,12 +3,13 @@ package com.jessin.practice.service;
 import com.jessin.practice.bean.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 /**
  * @author zexin.guo
  * @create 2017-11-12 下午4:10
  **/
-//@Service("1")
+@Service("1")
 public class ChildService extends AbstractService {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Override

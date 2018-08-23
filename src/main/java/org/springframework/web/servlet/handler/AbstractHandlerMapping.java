@@ -352,7 +352,7 @@ public abstract class AbstractHandlerMapping extends WebApplicationObjectSupport
 			return null;
 		}
 		// Bean name or resolved handler?
-		// 如果是字符串，则认为是beanName，可以从ApplicationContext获取到对应的bean
+		// 如果是字符串，则认为是beanName，可以从ApplicationContext获取到对应的bean'
 		if (handler instanceof String) {
 			String handlerName = (String) handler;
 			handler = getApplicationContext().getBean(handlerName);
