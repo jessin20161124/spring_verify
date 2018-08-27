@@ -771,9 +771,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 		ServletWebRequest webRequest = new ServletWebRequest(request, response);
 
+		// 封装了所有的@InitBinder的注解方法
+		// TODO 每次都新建一下
 		WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 		ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
 
+		// HandlerMethod的封装
 		ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
 		invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 		invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
@@ -804,6 +807,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			invocableMethod = invocableMethod.wrapConcurrentResult(result);
 		}
 
+		// 调用
 		invocableMethod.invokeAndHandle(webRequest, mavContainer);
 		if (asyncManager.isConcurrentHandlingStarted()) {
 			return null;
@@ -827,6 +831,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		Class<?> handlerType = handlerMethod.getBeanType();
 		Set<Method> methods = this.modelAttributeCache.get(handlerType);
 		if (methods == null) {
+			// 含有@RequestMapping和@ModelAttribute注解的方法
 			methods = MethodIntrospector.selectMethods(handlerType, MODEL_ATTRIBUTE_METHODS);
 			this.modelAttributeCache.put(handlerType, methods);
 		}
@@ -858,12 +863,14 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	private WebDataBinderFactory getDataBinderFactory(HandlerMethod handlerMethod) throws Exception {
 		Class<?> handlerType = handlerMethod.getBeanType();
 		Set<Method> methods = this.initBinderCache.get(handlerType);
+		// TODO 寻找当前HandlerMethod所在类的@InitBinder注解
 		if (methods == null) {
 			methods = MethodIntrospector.selectMethods(handlerType, INIT_BINDER_METHODS);
 			this.initBinderCache.put(handlerType, methods);
 		}
 		List<InvocableHandlerMethod> initBinderMethods = new ArrayList<InvocableHandlerMethod>();
 		// Global methods first
+		// TODO @ControllerAdvice中的@InitBinder??
 		for (Entry<ControllerAdviceBean, Set<Method>> entry : this.initBinderAdviceCache.entrySet()) {
 			if (entry.getKey().isApplicableToBeanType(handlerType)) {
 				Object bean = entry.getKey().resolveBean();

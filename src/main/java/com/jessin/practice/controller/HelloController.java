@@ -69,11 +69,13 @@ public class HelloController {
         //dataBinder.registerCustomEditor(List.class, new UserEditor());
     }
 
-    @RequestMapping(value = "/hello", params = "car=123")
+//    @RequestMapping(value = "/hello", params = "car=123")
+
+    @RequestMapping(value = "/hello")
     @ResponseBody
     // 可以通过注入数组，调用set方法设置属性。
     // curl 'http://localhost:8081/practice/hello?name=tom&car=1342&car=13412' --data-urlencode 'car=我爱你'
-    public Map<String, Object> sayHello(){
+    public Map<String, Object> sayHello(User user){
         try{
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             //user.setName(null);
@@ -85,10 +87,6 @@ public class HelloController {
             throw new RuntimeException(e);
         }
         Map<String, Object> map = new HashMap();
-        User user = new User();
-        user.setId(1);
-        user.setBirthday(new Date());
-        user.setName("小妹");
         map.put("user", user);
         LOGGER.info(".................发布事件..........................");
         LOGGER.info("获取到带有所有的Controller bean：{}", applicationContext.getBeansWithAnnotation(Controller.class));
