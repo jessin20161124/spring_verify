@@ -191,26 +191,18 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 
 		final String beanName = transformedBeanName(name);
-		logger.info("第一步转换beanName : " + name + " -> " + beanName);
+		logger.info("1. 转换beanName : " + name + "，标准名为： " + beanName);
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
 		Object sharedInstance = getSingleton(beanName);
-		logger.info("从缓存中获取到的bean : " + name + " -> " + sharedInstance);
 		if (sharedInstance != null && args == null) {
-			if (logger.isDebugEnabled()) {
-				if (isSingletonCurrentlyInCreation(beanName)) {
-					logger.debug("Returning eagerly cached instance of singleton bean '" + beanName +
-							"' that is not fully initialized yet - a consequence of a circular reference");
-				}
-				else {
-					logger.debug("Returning cached instance of singleton bean '" + beanName + "'");
-				}
-			}
+			logger.info("2. 从缓存中获取到的bean : " + name + " -> " + sharedInstance);
 			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
 		}
 
 		else {
+			logger.info("2. 缓存不存在，创建bean : " + name + "，标准名为：" + beanName);
 			// Fail if we're already creating this bean instance:
 			// We're assumably within a circular reference.
 			if (isPrototypeCurrentlyInCreation(beanName)) {
@@ -239,7 +231,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			try {
 				final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
 				checkMergedBeanDefinition(mbd, beanName, args);
-				logger.info("先实例化依赖" + beanName);
+				logger.info("3. 先构建" + beanName + "的dependsOn依赖");
 				// Guarantee initialization of beans that the current bean depends on.
 				String[] dependsOn = mbd.getDependsOn();
 				if (dependsOn != null) {
@@ -259,7 +251,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						@Override
 						public Object getObject() throws BeansException {
 							try {
-								logger.info("从objectFactory创建bean实例");
+								logger.info("5. 从objectFactory创建bean实例");
 								return createBean(beanName, mbd, args);
 							}
 							catch (BeansException ex) {
@@ -351,6 +343,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 	@Override
 	public boolean isSingleton(String name) throws NoSuchBeanDefinitionException {
+		logger.info("判断：" + name + "是否是单例");
 		String beanName = transformedBeanName(name);
 
 		Object beanInstance = getSingleton(beanName, false);
@@ -1548,6 +1541,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected Object getObjectForBeanInstance(
 			Object beanInstance, String name, String beanName, RootBeanDefinition mbd) {
 
+		logger.info("25. 获取bean : " + beanName + "如果为FactoryBean，则需调用getObject()");
 		// Don't let calling code try to dereference the factory if the bean isn't a factory.
 		if (BeanFactoryUtils.isFactoryDereference(name) && !(beanInstance instanceof FactoryBean)) {
 			throw new BeanIsNotAFactoryException(transformedBeanName(name), beanInstance.getClass());
@@ -1625,6 +1619,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				// DisposableBean interface, custom destroy method.
 				registerDisposableBean(beanName,
 						new DisposableBeanAdapter(bean, beanName, mbd, getBeanPostProcessors(), acc));
+				logger.info("23. " + beanName + "设置destroy..");
 			}
 			else {
 				// A bean with a custom scope...

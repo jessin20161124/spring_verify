@@ -16,15 +16,14 @@
 
 package org.springframework.web.method.support;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.core.MethodParameter;
+import org.springframework.web.context.request.NativeWebRequest;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.core.MethodParameter;
-import org.springframework.web.context.request.NativeWebRequest;
 
 /**
  * Handles method return values by delegating to a list of registered {@link HandlerMethodReturnValueHandler}s.
@@ -87,7 +86,9 @@ public class HandlerMethodReturnValueHandlerComposite implements AsyncHandlerMet
 			if (isAsyncValue && !(handler instanceof AsyncHandlerMethodReturnValueHandler)) {
 				continue;
 			}
-			if (handler.supportsReturnType(returnType)) {
+            logger.info("判断返回值处理器" + handler + "是否支持处理：" + returnType);
+            if (handler.supportsReturnType(returnType)) {
+				logger.info("返回值处理器" + handler + "支持处理：" + returnType + "！！！");
 				return handler;
 			}
 		}

@@ -60,21 +60,21 @@
 
     <!-- 主要是注入messageConverter -->
      <!--完成JSON格式数据的自动转换-->
-    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
-        <!--<property name="messageConverters">-->
-            <!--<list>-->
-                <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
-                    <!--<property name="objectMapper">-->
-                        <!--<bean class="com.fasterxml.jackson.databind.ObjectMapper">-->
-                            <!--<property name="serializationInclusion">-->
-                                <!--<value type="com.fasterxml.jackson.annotation.JsonInclude$Include">NON_NULL</value>-->
-                            <!--</property>-->
-                        <!--</bean>-->
-                    <!--</property>-->
-                <!--</bean>-->
-            <!--</list>-->
-        <!--</property>-->
-    <!--</bean>-->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="objectMapper">
+                        <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                            <property name="serializationInclusion">
+                                <value type="com.fasterxml.jackson.annotation.JsonInclude$Include">NON_NULL</value>
+                            </property>
+                        </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
     <!--<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter">-->
     <!--</bean>-->
     <mvc:annotation-driven>

@@ -310,7 +310,7 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 
 		@Override
 		public void setValue(final Object object, Object valueToApply) throws Exception {
-			LOGGER.info("调用BeanWrapperImpl的setValue方法, {}，{}，{}", object, valueToApply, pd.getWriteMethod().getName());
+			LOGGER.info("调用BeanWrapperImpl： {}_{}的setValue方法，注入：{}", object, pd.getWriteMethod().getName(), valueToApply);
 			final Method writeMethod = (this.pd instanceof GenericTypeAwarePropertyDescriptor ?
 					((GenericTypeAwarePropertyDescriptor) this.pd).getWriteMethodForActualAccess() :
 					this.pd.getWriteMethod());

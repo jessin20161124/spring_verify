@@ -220,6 +220,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	protected Object doInvoke(Object... args) throws Exception {
 		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
+			logger.info("调用handler：" + getBean() + "的方法：" + getBridgedMethod() + "，参数为：" + Arrays.asList(args));
 			return getBridgedMethod().invoke(getBean(), args);
 		}
 		catch (IllegalArgumentException ex) {

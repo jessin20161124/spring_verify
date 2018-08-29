@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false" scan="true" scanPeriod="30 seconds">
     <!-- 定义日志输出格式 -->
-    <property name="sta_pattern" value="%d{MM-dd HH:mm:ss.SSS} %5p %c:%L [%thread] %m%n"/>
+    <property name="sta_pattern" value="%d{MM-dd HH:mm:ss.SSS} %5p %c.%M:%L [%thread] %m%n"/>
 
     <!-- 错误日志输出文件配置 -->
     <appender name="errorLogger" class="ch.qos.logback.core.rolling.RollingFileAppender">

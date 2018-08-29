@@ -16,12 +16,12 @@
 
 package org.springframework.web.bind;
 
-import javax.servlet.ServletRequest;
-
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.validation.BindException;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.ServletRequest;
 
 /**
  * Special {@link org.springframework.validation.DataBinder} to perform data binding
@@ -97,6 +97,7 @@ public class ServletRequestDataBinder extends WebDataBinder {
 	 * @see #bind(org.springframework.beans.PropertyValues)
 	 */
 	public void bind(ServletRequest request) {
+		// TODO 封装ServletRequest中的请求参数
 		MutablePropertyValues mpvs = new ServletRequestParameterPropertyValues(request);
 		MultipartRequest multipartRequest = WebUtils.getNativeRequest(request, MultipartRequest.class);
 		if (multipartRequest != null) {

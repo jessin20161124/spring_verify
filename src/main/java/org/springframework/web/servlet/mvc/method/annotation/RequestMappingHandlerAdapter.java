@@ -288,6 +288,21 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		this.contentNegotiationManager = contentNegotiationManager;
 	}
 
+    /**
+     *
+     *
+     * [org.springframework.http.converter.json.MappingJackson2HttpMessageConverter@6a816369,
+     * org.springframework.http.converter.ByteArrayHttpMessageConverter@43b5c521,
+     * org.springframework.http.converter.StringHttpMessageConverter@65123405,
+     * org.springframework.http.converter.ResourceHttpMessageConverter@54a11e84,
+     * org.springframework.http.converter.xml.SourceHttpMessageConverter@35dab552,
+     * org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter@582be205,
+     * org.springframework.http.converter.feed.AtomFeedHttpMessageConverter@2c6d4719,
+     * org.springframework.http.converter.feed.RssChannelHttpMessageConverter@70e4392e,
+     * org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter@51db49fb,
+     * org.springframework.http.converter.json.MappingJackson2HttpMessageConverter@6065e8e7]
+
+     */
 	/**
 	 * Provide the converters to use in argument resolvers and return value
 	 * handlers that support reading and/or writing to the body of the
@@ -592,6 +607,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 		// Catch-all
 		resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
+		// TODO 兜底的那一个
 		resolvers.add(new ServletModelAttributeMethodProcessor(true));
 
 		return resolvers;
@@ -654,6 +670,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 		// Annotation-based return value types
 		handlers.add(new ModelAttributeMethodProcessor(false));
+		// TODO 处理@ResponseBody返回值
 		handlers.add(new RequestResponseBodyMethodProcessor(getMessageConverters(),
 				this.contentNegotiationManager, this.requestResponseBodyAdvice));
 

@@ -16,15 +16,6 @@
 
 package org.springframework.web.method.annotation;
 
-import java.beans.PropertyEditor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.core.GenericCollectionTypeResolver;
@@ -47,6 +38,15 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.util.WebUtils;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
+import java.beans.PropertyEditor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Resolves method arguments annotated with @{@link RequestParam}, arguments of
@@ -199,6 +199,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 					arg = (files.size() == 1 ? files.get(0) : files);
 				}
 			}
+			// TODO 获取参数值
 			if (arg == null) {
 				String[] paramValues = webRequest.getParameterValues(name);
 				if (paramValues != null) {

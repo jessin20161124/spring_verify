@@ -172,16 +172,20 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 			throw new IllegalArgumentException("No converter found for return value of type: " + valueType);
 		}
 
+		logger.info("服务端支持的类型：" + producibleMediaTypes);
+
 		Set<MediaType> compatibleMediaTypes = new LinkedHashSet<MediaType>();
 		for (MediaType requestedType : requestedMediaTypes) {
 			for (MediaType producibleType : producibleMediaTypes) {
 				if (requestedType.isCompatibleWith(producibleType)) {
-					compatibleMediaTypes.add(getMostSpecificMediaType(requestedType, producibleType));
+                    logger.info("请求类型：" + requestedType + "兼容服务端可以生成的类型" + producibleType);
+                    compatibleMediaTypes.add(getMostSpecificMediaType(requestedType, producibleType));
 				}
 			}
 		}
 		logger.info("兼容媒体类型" + compatibleMediaTypes);
 		if (compatibleMediaTypes.isEmpty()) {
+			// 有返回值时，兼容媒体类型不能为空
 			if (value != null) {
 				throw new HttpMediaTypeNotAcceptableException(producibleMediaTypes);
 			}
@@ -205,13 +209,14 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 
 		if (selectedMediaType != null) {
 			selectedMediaType = selectedMediaType.removeQualityValue();
-			logger.info("判断之前，所有的messageConverter列表为：" + this.messageConverters);
+			logger.info("判断之前，所有的messageConverter列表为：" + this.messageConverters + "选择的媒体类型为：" + selectedMediaType);
 			for (HttpMessageConverter<?> messageConverter : this.messageConverters) {
-				logger.info("判断messageConverter是否可以处理返回值" + messageConverter);
+				logger.info("判断messageConverter：" + messageConverter + "是否可以处理返回值");
 				if (messageConverter instanceof GenericHttpMessageConverter) {
 					if (((GenericHttpMessageConverter<T>) messageConverter).canWrite(
 							declaredType, valueType, selectedMediaType)) {
-						value = (T) getAdvice().beforeBodyWrite(value, returnType, selectedMediaType,
+                        logger.info("GenericHttpMessageConverter消息处理器：" + messageConverter + "可以处理值类型" + valueType);
+                        value = (T) getAdvice().beforeBodyWrite(value, returnType, selectedMediaType,
 								(Class<? extends HttpMessageConverter<?>>) messageConverter.getClass(),
 								inputMessage, outputMessage);
 						if (value != null) {
@@ -232,8 +237,8 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 					if (value != null) {
 						addContentDispositionHeader(inputMessage, outputMessage);
 						((HttpMessageConverter<T>) messageConverter).write(value, selectedMediaType, outputMessage);
-						if (logger.isDebugEnabled()) {
-							logger.debug("Written [" + value + "] as \"" + selectedMediaType +
+						if (logger.isInfoEnabled()) {
+							logger.info("Written [" + value + "] as \"" + selectedMediaType +
 									"\" using [" + messageConverter + "]");
 						}
 					}
@@ -294,6 +299,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 			return new ArrayList<MediaType>(mediaTypes);
 		}
 		else if (!this.allSupportedMediaTypes.isEmpty()) {
+		    logger.info("当前handlerMethod的produces media type为空");
 			List<MediaType> result = new ArrayList<MediaType>();
 			for (HttpMessageConverter<?> converter : this.messageConverters) {
 				if (converter instanceof GenericHttpMessageConverter && declaredType != null) {

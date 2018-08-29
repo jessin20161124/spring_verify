@@ -143,6 +143,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 			this.earlySingletonObjects.remove(beanName);
 			// 将对应的beanName添加到单例LinkedHashSet中
 			this.registeredSingletons.add(beanName);
+			logger.info("24. 将" + beanName + "添加到单例缓存中");
 		}
 	}
 
@@ -185,9 +186,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		Object singletonObject = this.singletonObjects.get(beanName);
-		logger.info("进入getSingleton, 结果：" + singletonObject);
+		logger.info("22. 进入getSingleton查看" + beanName + "的缓存, 结果：" + singletonObject);
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
-			logger.info("bean : " + beanName + "正在创建");
+			logger.info("22. bean : " + beanName + "正在创建");
 			synchronized (this.singletonObjects) {
 				// 1. 获取提前暴露的bean
 				singletonObject = this.earlySingletonObjects.get(beanName);
@@ -199,6 +200,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 						// 3. 提前暴露的bean放到earlySingletonObjects，以后再次获取这个bean时先从这里获取，也就是1
 						this.earlySingletonObjects.put(beanName, singletonObject);
 						this.singletonFactories.remove(beanName);
+						logger.info("22. 提前曝光bean : " + beanName);
 					}
 				}
 			}
@@ -227,7 +229,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 							"(Do not request a bean from a BeanFactory in a destroy method implementation!)");
 				}
 				if (logger.isInfoEnabled()) {
-					logger.info("创建单例bean '" + beanName + "'");
+					logger.info("4. 开始单例bean '" + beanName + "'的构建周期");
 				}
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
@@ -270,6 +272,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					// 新建时加入缓存中
 					addSingleton(beanName, singletonObject);
 				}
+				logger.info("25. 单例bean '" + beanName + "'的构建周期结束");
 			}
 			return (singletonObject != NULL_OBJECT ? singletonObject : null);
 		}

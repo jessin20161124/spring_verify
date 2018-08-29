@@ -16,10 +16,6 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.util.Collections;
-import java.util.Map;
-import javax.servlet.ServletRequest;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.TypeDescriptor;
@@ -33,6 +29,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.method.annotation.ModelAttributeMethodProcessor;
 import org.springframework.web.servlet.HandlerMapping;
+
+import javax.servlet.ServletRequest;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * A Servlet-specific {@link ModelAttributeMethodProcessor} that applies data
@@ -139,6 +139,7 @@ public class ServletModelAttributeMethodProcessor extends ModelAttributeMethodPr
 	}
 
 	/**
+	 * TODO MethodProcessor和DataBinder的区别？？
 	 * This implementation downcasts {@link WebDataBinder} to
 	 * {@link ServletRequestDataBinder} before binding.
 	 * @see ServletRequestDataBinderFactory
@@ -146,6 +147,7 @@ public class ServletModelAttributeMethodProcessor extends ModelAttributeMethodPr
 	@Override
 	protected void bindRequestParameters(WebDataBinder binder, NativeWebRequest request) {
 		ServletRequest servletRequest = request.getNativeRequest(ServletRequest.class);
+		// TODO 子类直接使用ServletRequestDataBinder
 		ServletRequestDataBinder servletBinder = (ServletRequestDataBinder) binder;
 		servletBinder.bind(servletRequest);
 	}
