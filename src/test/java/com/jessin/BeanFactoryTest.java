@@ -5,6 +5,7 @@ import com.jessin.practice.service.ChildService;
 import org.junit.Test;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.PropertyValues;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
@@ -77,5 +78,11 @@ public class BeanFactoryTest {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void test3() {
+        Resource resource = new ClassPathResource("/spring/mvc.xml");
+        BeanFactory beanFactory = new XmlBeanFactory(resource);
     }
 }

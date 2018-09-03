@@ -92,6 +92,10 @@ public class HelloController {
         LOGGER.info(".................发布事件，map为:{}..........................", map);
         LOGGER.info("获取到带有所有的Controller bean：{}", applicationContext.getBeansWithAnnotation(Controller.class));
         LOGGER.info("获取RequestMappingHandlerAdapter所有实例的beanName : {}", applicationContext.getBeanNamesForType(RequestMappingHandlerAdapter.class));
+        LOGGER.info("获取RequestMappingHandlerAdapter : {}, {}",
+                applicationContext.getBean(RequestMappingHandlerAdapter.class.getName()),
+                applicationContext.getBean(RequestMappingHandlerAdapter.class.getName() + "#0"));
+
         applicationContext.publishEvent(new HelloEvent("say hello"));
         applicationContext.publishEvent("just string");
         return map;

@@ -16,11 +16,8 @@
 
 package org.springframework.web.servlet.config;
 
-import java.util.List;
-import java.util.Properties;
-
-import org.w3c.dom.Element;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -73,14 +70,12 @@ import org.springframework.web.servlet.mvc.Controller;
 import org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter;
 import org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter;
 import org.springframework.web.servlet.mvc.annotation.ResponseStatusExceptionResolver;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
-import org.springframework.web.servlet.mvc.method.annotation.JsonViewRequestBodyAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.JsonViewResponseBodyAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import org.springframework.web.servlet.mvc.method.annotation.ServletWebArgumentResolverAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.*;
 import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
+import org.w3c.dom.Element;
+
+import java.util.List;
+import java.util.Properties;
 
 /**
  * A {@link BeanDefinitionParser} that provides the configuration for the
@@ -148,6 +143,8 @@ import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolv
  * @since 3.0
  */
 class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParser {
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	public static final String HANDLER_MAPPING_BEAN_NAME = RequestMappingHandlerMapping.class.getName();
 
@@ -259,7 +256,15 @@ class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParser {
 
 		handlerAdapterDef.getPropertyValues().add("callableInterceptors", callableInterceptors);
 		handlerAdapterDef.getPropertyValues().add("deferredResultInterceptors", deferredResultInterceptors);
+		// 注入的是类全名
+		logger.info("注入：{}", HANDLER_ADAPTER_BEAN_NAME);
 		readerContext.getRegistry().registerBeanDefinition(HANDLER_ADAPTER_BEAN_NAME , handlerAdapterDef);
+		try {
+			logger.info("获取 : {}，结果为：{}", HANDLER_ADAPTER_BEAN_NAME, readerContext.getRegistry().getBeanDefinition(HANDLER_ADAPTER_BEAN_NAME));
+			logger.info("获取 : {}，结果为：{}", HANDLER_ADAPTER_BEAN_NAME + "#0", readerContext.getRegistry().getBeanDefinition(HANDLER_ADAPTER_BEAN_NAME + "#0"));
+		} catch (Exception e) {
+			logger.error("获取：{}出错", HANDLER_ADAPTER_BEAN_NAME, e);
+		}
 
 		String uriCompContribName = MvcUriComponentsBuilder.MVC_URI_COMPONENTS_CONTRIBUTOR_BEAN_NAME;
 		RootBeanDefinition uriCompContribDef = new RootBeanDefinition(CompositeUriComponentsContributorFactoryBean.class);

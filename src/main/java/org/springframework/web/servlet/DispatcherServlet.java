@@ -16,6 +16,7 @@
 
 package org.springframework.web.servlet;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -609,7 +610,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			 * org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter@162bbff,
 			 * org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter@22aa337d,
 			 */
-			logger.info("检测所有的处理器适配器，结果为：" + handlerAdapters + " " + getClass().getClassLoader());
+			logger.info("检测所有的处理器适配器，结果为：" + JSON.toJSONString(matchingBeans.keySet()) + "类加载器为：" + getClass().getClassLoader());
 		}
 		else {
 			try {

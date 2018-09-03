@@ -58,8 +58,17 @@
     <!-- 需要这一个配置，使得下面的json配置有效-->
     <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>-->
 
-    <!-- 主要是注入messageConverter -->
+    <!--</bean>-->
+    <!-- TODO 这种情况使用的是第一种，使用的是内置的RequestMappingHandlerAdapter -->
+    <mvc:annotation-driven>
+        <!--&lt;!&ndash; 这里是添加，其实已经有了这个converter，但是位于列表的最后，这里再加一个相同的，但是放在前面 &ndash;&gt;-->
+        <!--<mvc:message-converters>-->
+        <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
+        <!--</bean>-->
+        <!--</mvc:message-converters>-->
+    </mvc:annotation-driven>
      <!--完成JSON格式数据的自动转换-->
+    <!-- 默认beanName为类全名#0 -->
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
             <list>
@@ -76,14 +85,7 @@
         </property>
     </bean>
     <!--<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter">-->
-    <!--</bean>-->
-    <mvc:annotation-driven>
-        <!-- 这里是添加，其实已经有了这个converter，但是位于列表的最后，这里再加一个相同的，但是放在前面 -->
-        <mvc:message-converters>
-            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-            </bean>
-        </mvc:message-converters>
-    </mvc:annotation-driven>
+
 
     <!-- PropertyPlaceholderConfigurer是一个BeanFactoryPostProcessor，只在该容器中起作用，不可继承-->
     <context:property-placeholder location="classpath*:/test.properties" />

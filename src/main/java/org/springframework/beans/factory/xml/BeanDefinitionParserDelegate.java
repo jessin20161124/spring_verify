@@ -388,6 +388,7 @@ public class BeanDefinitionParserDelegate {
 
 
 	/**
+	 * TODO 专门解析bean标签
 	 * Parses the supplied {@code <bean>} element. May return {@code null}
 	 * if there were errors during parse. Errors are reported to the
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
@@ -409,9 +410,11 @@ public class BeanDefinitionParserDelegate {
 		List<String> aliases = new ArrayList<String>();
 		if (StringUtils.hasLength(nameAttr)) {
 			String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, MULTI_VALUE_ATTRIBUTE_DELIMITERS);
+			// TODO 获得别名
 			aliases.addAll(Arrays.asList(nameArr));
 		}
 
+		// TODO 获得beanName
 		String beanName = id;
 		if (!StringUtils.hasText(beanName) && !aliases.isEmpty()) {
 			beanName = aliases.remove(0);
@@ -434,7 +437,7 @@ public class BeanDefinitionParserDelegate {
 								beanDefinition, this.readerContext.getRegistry(), true);
 					}
 					else {
-						// 没有id时产生beanName
+						// 没有id时产生beanName，类全名#0，不会与已经有的bean名字重叠
 						beanName = this.readerContext.generateBeanName(beanDefinition);
 						// Register an alias for the plain bean class name, if still possible,
 						// if the generator returned the class name plus a suffix.
@@ -443,7 +446,9 @@ public class BeanDefinitionParserDelegate {
 						if (beanClassName != null &&
 								beanName.startsWith(beanClassName) && beanName.length() > beanClassName.length() &&
 								!this.readerContext.getRegistry().isBeanNameInUse(beanClassName)) {
+							// 类全名变成别名
 							aliases.add(beanClassName);
+							throw new IllegalArgumentException("非法" + beanName);
 						}
 					}
 					if (logger.isDebugEnabled()) {

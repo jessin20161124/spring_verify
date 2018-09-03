@@ -1132,7 +1132,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	 * Find bean instances that match the required type.
 	 * Called during autowiring for the specified bean.
 	 * @param beanName the name of the bean that is about to be wired
-	 * @param requiredType the actual type of bean to look for
+	 * @param requiredType the actual type of bean to look for 数组的话是元素类型，集合的话是集合元素的类型，Map的话是value的类型
 	 * (may be an array component type or collection element type)
 	 * @param descriptor the descriptor of the dependency to resolve
 	 * @return a Map of candidate names and candidate instances that match
@@ -1149,6 +1149,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		Map<String, Object> result = new LinkedHashMap<String, Object>(candidateNames.length);
 
 		for (Class<?> autowiringType : this.resolvableDependencies.keySet()) {
+			// TODO 是否相反？？ autowiringType = requiredType
 			if (autowiringType.isAssignableFrom(requiredType)) {
 
 				Object autowiringValue = this.resolvableDependencies.get(autowiringType);
@@ -1176,6 +1177,11 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 		return result;
 	}
+
+	public static void main(String[] args) {
+	    // autowiringType 是 requiredType的父类
+	    System.out.println("赋值结果：" + Number.class.isAssignableFrom(Integer.class));
+    }
 
 	/**
 	 * Determine the autowire candidate in the given set of beans.
