@@ -16,11 +16,6 @@
 
 package org.springframework.web.method.annotation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.support.DefaultDataBinderFactory;
@@ -28,6 +23,11 @@ import org.springframework.web.bind.support.WebBindingInitializer;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.support.InvocableHandlerMethod;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Adds initialization to a WebDataBinder via {@code @InitBinder} methods.
@@ -41,7 +41,7 @@ public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 
 	/**
 	 * Create a new instance.
-	 * @param binderMethods {@code @InitBinder} methods, or {@code null}
+	 * @param binderMethods {@code @InitBinder} methods, or {@code null} TODO 所有InitBinder方法
 	 * @param initializer for global data binder intialization
 	 */
 	public InitBinderDataBinderFactory(List<InvocableHandlerMethod> binderMethods, WebBindingInitializer initializer) {
@@ -57,8 +57,10 @@ public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 	 */
 	@Override
 	public void initBinder(WebDataBinder binder, NativeWebRequest request) throws Exception {
+		// TODO InitBinder方法能否处理该binder
 		for (InvocableHandlerMethod binderMethod : this.binderMethods) {
 			if (isBinderMethodApplicable(binderMethod, binder)) {
+				// TODO 已经提供的参数是binder参数
 				Object returnValue = binderMethod.invokeForRequest(request, null, binder);
 				if (returnValue != null) {
 					throw new IllegalStateException("@InitBinder methods should return void: " + binderMethod);

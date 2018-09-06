@@ -128,6 +128,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 		if (parameter.hasParameterAnnotation(RequestParam.class)) {
 			if (Map.class.isAssignableFrom(paramType)) {
 				String paramName = parameter.getParameterAnnotation(RequestParam.class).name();
+				// todo Map需要参数名？？
 				return StringUtils.hasText(paramName);
 			}
 			else {
@@ -153,6 +154,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 	@Override
 	protected NamedValueInfo createNamedValueInfo(MethodParameter parameter) {
 		RequestParam ann = parameter.getParameterAnnotation(RequestParam.class);
+		// 解析RequestParam注解，创建了一个子类
 		return (ann != null ? new RequestParamNamedValueInfo(ann) : new RequestParamNamedValueInfo());
 	}
 
@@ -199,7 +201,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 					arg = (files.size() == 1 ? files.get(0) : files);
 				}
 			}
-			// TODO 获取参数值
+			// TODO 获取参数值，返回的是string，可能需要进行类型转换
 			if (arg == null) {
 				String[] paramValues = webRequest.getParameterValues(name);
 				if (paramValues != null) {

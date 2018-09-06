@@ -16,19 +16,17 @@
 
 package org.springframework.web.servlet.view.xml;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.json.AbstractJackson2View;
 
+import java.util.Map;
+
 /**
  * Spring MVC {@link View} that renders XML content by serializing the model for the current request
- * using <a href="http://wiki.fasterxml.com/JacksonHome">Jackson 2's</a> {@link XmlMapper}.
+ * using <a href="http://wiki.fasterxml.com/JacksonHome">Jackson 2's</a> .
  *
  * <p>The Object to be serialized is supplied as a parameter in the model. The first serializable
  * entry is used. Users can either specify a specific entry in the model via the
@@ -59,13 +57,13 @@ public class MappingJackson2XmlView extends AbstractJackson2View {
 	}
 
 	/**
-	 * Construct a new {@code MappingJackson2XmlView} using the provided {@link XmlMapper}
+	 * Construct a new {@code MappingJackson2XmlView} using the provided
 	 * and setting the content type to {@code application/xml}.
 	 * @since 4.2.1
 	 */
-	public MappingJackson2XmlView(XmlMapper xmlMapper) {
-		super(xmlMapper, DEFAULT_CONTENT_TYPE);
-	}
+//	public MappingJackson2XmlView(XmlMapper xmlMapper) {
+//		super(xmlMapper, DEFAULT_CONTENT_TYPE);
+//	}
 
 	/**
 	 * {@inheritDoc}

@@ -16,11 +16,11 @@
 
 package org.springframework.beans;
 
-import java.lang.reflect.Field;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionException;
 import org.springframework.core.convert.ConverterNotFoundException;
+
+import java.lang.reflect.Field;
 
 /**
  * Base implementation of the {@link TypeConverter} interface, using a package-private delegate.
@@ -54,6 +54,17 @@ public abstract class TypeConverterSupport extends PropertyEditorRegistrySupport
 		return doConvert(value, requiredType, null, field);
 	}
 
+	/**
+	 * TODO 交给代理来转换参数
+	 * TODO this.typeConverterDelegate = new TypeConverterDelegate(this);
+	 * @param value
+	 * @param requiredType
+	 * @param methodParam
+	 * @param field
+	 * @param <T>
+	 * @return
+	 * @throws TypeMismatchException
+	 */
 	private <T> T doConvert(Object value, Class<T> requiredType, MethodParameter methodParam, Field field)
 			throws TypeMismatchException {
 		try {

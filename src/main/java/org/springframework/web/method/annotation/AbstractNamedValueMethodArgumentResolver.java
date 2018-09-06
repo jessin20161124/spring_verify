@@ -85,9 +85,11 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
 		Class<?> paramType = parameter.getParameterType();
+		// TODO 里面有抽象方法，将一些参数统一转换为NameValueInfo
 		NamedValueInfo namedValueInfo = getNamedValueInfo(parameter);
 
 		Object arg = resolveName(namedValueInfo.name, parameter, webRequest);
+		// arg没有解析到值，尝试使用默认值
 		if (arg == null) {
 			if (namedValueInfo.defaultValue != null) {
 				arg = resolveDefaultValue(namedValueInfo.defaultValue);
@@ -102,7 +104,8 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 		}
 
 		if (binderFactory != null) {
-			// 抛出类型失配的异常
+			// TODO 解析到参数后，进行参数转换，如果参数不匹配，将抛出类型失配的异常，返回的binder是ExtendedServletRequestDataBinder，绑定的target为null
+            // 该binder已经被初始化了，注入了WebBindingInitializer相关设置和调用了匹配的所有＠InitBinder方法对binder进行处理，binder作为最后一个入参
 			WebDataBinder binder = binderFactory.createBinder(webRequest, null, namedValueInfo.name);
 			try {
 				arg = binder.convertIfNecessary(arg, paramType, parameter);
@@ -165,7 +168,7 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 	 * @param name the name of the value being resolved
 	 * @param parameter the method parameter to resolve to an argument value
 	 * @param request the current request
-	 * @return the resolved argument. May be {@code null}
+	 * @return the resolved argument. May be {@code null} 可能返回字符串
 	 * @throws Exception in case of errors
 	 */
 	protected abstract Object resolveName(String name, MethodParameter parameter, NativeWebRequest request)

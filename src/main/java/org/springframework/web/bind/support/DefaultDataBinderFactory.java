@@ -44,6 +44,7 @@ public class DefaultDataBinderFactory implements WebDataBinderFactory {
 	/**
 	 * Create a new {@link WebDataBinder} for the given target object and
 	 * initialize it through a {@link WebBindingInitializer}.
+	 * TODO 返回ExtendedServletRequestDataBinder
 	 * @throws Exception in case of invalid state or arguments
 	 */
 	@Override
@@ -55,6 +56,7 @@ public class DefaultDataBinderFactory implements WebDataBinderFactory {
 		if (this.initializer != null) {
 			this.initializer.initBinder(dataBinder, webRequest);
 		}
+		// 调用@InitBinder方法
 		initBinder(dataBinder, webRequest);
 		return dataBinder;
 	}

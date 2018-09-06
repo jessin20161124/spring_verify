@@ -73,6 +73,7 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 	}
 
 	/**
+     * TODO 对应的构造函数
 	 * Create an instance from a {@code HandlerMethod}.
 	 */
 	public ServletInvocableHandlerMethod(HandlerMethod handlerMethod) {
@@ -125,6 +126,7 @@ public class ServletInvocableHandlerMethod extends InvocableHandlerMethod {
 		mavContainer.setRequestHandled(false);
 		try {
 			logger.info("处理返回值");
+			// TODO 调用返回值处理器解析返回值
 			this.returnValueHandlers.handleReturnValue(
 					returnValue, getReturnValueType(returnValue), mavContainer, webRequest);
 		}

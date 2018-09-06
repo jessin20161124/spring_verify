@@ -16,6 +16,13 @@
 
 package org.springframework.beans;
 
+import org.springframework.beans.propertyeditors.*;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourceArrayPropertyEditor;
+import org.springframework.util.ClassUtils;
+import org.xml.sax.InputSource;
+
 import java.beans.PropertyEditor;
 import java.io.File;
 import java.io.InputStream;
@@ -25,53 +32,8 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.Currency;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TimeZone;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
-
-import org.xml.sax.InputSource;
-
-import org.springframework.beans.propertyeditors.ByteArrayPropertyEditor;
-import org.springframework.beans.propertyeditors.CharArrayPropertyEditor;
-import org.springframework.beans.propertyeditors.CharacterEditor;
-import org.springframework.beans.propertyeditors.CharsetEditor;
-import org.springframework.beans.propertyeditors.ClassArrayEditor;
-import org.springframework.beans.propertyeditors.ClassEditor;
-import org.springframework.beans.propertyeditors.CurrencyEditor;
-import org.springframework.beans.propertyeditors.CustomBooleanEditor;
-import org.springframework.beans.propertyeditors.CustomCollectionEditor;
-import org.springframework.beans.propertyeditors.CustomMapEditor;
-import org.springframework.beans.propertyeditors.CustomNumberEditor;
-import org.springframework.beans.propertyeditors.FileEditor;
-import org.springframework.beans.propertyeditors.InputSourceEditor;
-import org.springframework.beans.propertyeditors.InputStreamEditor;
-import org.springframework.beans.propertyeditors.LocaleEditor;
-import org.springframework.beans.propertyeditors.PatternEditor;
-import org.springframework.beans.propertyeditors.PropertiesEditor;
-import org.springframework.beans.propertyeditors.ReaderEditor;
-import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
-import org.springframework.beans.propertyeditors.TimeZoneEditor;
-import org.springframework.beans.propertyeditors.URIEditor;
-import org.springframework.beans.propertyeditors.URLEditor;
-import org.springframework.beans.propertyeditors.UUIDEditor;
-import org.springframework.beans.propertyeditors.ZoneIdEditor;
-import org.springframework.core.convert.ConversionService;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.ResourceArrayPropertyEditor;
-import org.springframework.util.ClassUtils;
 
 /**
  * Base implementation of the {@link PropertyEditorRegistry} interface.
@@ -173,6 +135,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 	}
 
 	/**
+	 * 获取默认的editor，默认的editor可以覆盖
 	 * Retrieve the default editor for the given property type, if any.
 	 * <p>Lazily registers the default editors, if they are active.
 	 * @param requiredType type of the property
@@ -306,11 +269,21 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 			if (this.customEditors == null) {
 				this.customEditors = new LinkedHashMap<Class<?>, PropertyEditor>(16);
 			}
+			// 缓存自定义的属性编辑器
 			this.customEditors.put(requiredType, propertyEditor);
+			// 清空，可能不准了
 			this.customEditorCache = null;
 		}
 	}
 
+    /**
+     * TODO 几个关键的类
+     * @param requiredType the type of the property (can be {@code null} if a property
+     * is given but should be specified in any case for consistency checking)
+     * @param propertyPath the path of the property (name or nested path), or
+     * {@code null} if looking for an editor for all properties of the given type
+     * @return
+     */
 	@Override
 	public PropertyEditor findCustomEditor(Class<?> requiredType, String propertyPath) {
 		Class<?> requiredTypeToUse = requiredType;
@@ -410,6 +383,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 				// Find editor for superclass or interface.
 				for (Iterator<Class<?>> it = this.customEditors.keySet().iterator(); it.hasNext() && editor == null;) {
 					Class<?> key = it.next();
+					// TODO 如果注册的key是requiredType的父类，则该propertyEditor可以处理该类型，最后缓存起来
 					if (key.isAssignableFrom(requiredType)) {
 						editor = this.customEditors.get(key);
 						// Cache editor for search type, to avoid the overhead

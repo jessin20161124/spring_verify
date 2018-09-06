@@ -89,12 +89,13 @@
             <version>2.4.2</version>
         </dependency>
 
+        <!-- todo dataformat jar的存在会引进MappingJackson2XmlHttpMessageConverter-->
         <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-xml -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
-            <version>2.6.7</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.fasterxml.jackson.dataformat</groupId>-->
+            <!--<artifactId>jackson-dataformat-xml</artifactId>-->
+            <!--<version>2.6.7</version>-->
+        <!--</dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.webjars/webjars-locator-core -->
         <dependency>

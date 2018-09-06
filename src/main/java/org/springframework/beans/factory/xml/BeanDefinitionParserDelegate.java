@@ -448,7 +448,7 @@ public class BeanDefinitionParserDelegate {
 								!this.readerContext.getRegistry().isBeanNameInUse(beanClassName)) {
 							// 类全名变成别名
 							aliases.add(beanClassName);
-							throw new IllegalArgumentException("非法" + beanName);
+							// TODO 自动注入别名。。。
 						}
 					}
 					if (logger.isDebugEnabled()) {

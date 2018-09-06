@@ -16,14 +16,6 @@
 
 package org.springframework.web.method;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -34,6 +26,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+
+import java.lang.annotation.Annotation;
+import java.util.*;
 
 /**
  * Encapsulates information about an {@linkplain ControllerAdvice @ControllerAdvice}
@@ -102,6 +97,7 @@ public class ControllerAdviceBean implements Ordered {
 			this.order = initOrderFromBean(bean);
 		}
 
+		// TODO 增强适用的类型
 		ControllerAdvice annotation = AnnotationUtils.findAnnotation(beanType, ControllerAdvice.class);
 		if (annotation != null) {
 			this.basePackages = initBasePackages(annotation);
@@ -144,6 +140,7 @@ public class ControllerAdviceBean implements Ordered {
 	}
 
 	/**
+	 * TODO 在指定的包内或者是可分配的类型或者或者有某个注解，则可以使用该ControllerAdvice；没有任何条件，适用任何bean
 	 * Check whether the given bean type should be assisted by this
 	 * {@code @ControllerAdvice} instance.
 	 * @param beanType the type of the bean to check

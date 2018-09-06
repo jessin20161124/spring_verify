@@ -510,6 +510,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		}
 		if (this.initBinderArgumentResolvers == null) {
             logger.info("InitBinder解析器为空");
+            // 这种情况设置Custom相关属性，会排在默认值后面
             List<HandlerMethodArgumentResolver> resolvers = getDefaultInitBinderArgumentResolvers();
 			this.initBinderArgumentResolvers = new HandlerMethodArgumentResolverComposite().addResolvers(resolvers);
 		}
@@ -525,7 +526,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			return;
 		}
 		if (logger.isInfoEnabled()) {
-			logger.info("Looking for @ControllerAdvice: " + getApplicationContext());
+			logger.info("寻找标有@ControllerAdvice注解的bean " + getApplicationContext());
 		}
 
 		List<ControllerAdviceBean> beans = ControllerAdviceBean.findAnnotatedBeans(getApplicationContext());
@@ -533,6 +534,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 		List<Object> requestResponseBodyAdviceBeans = new ArrayList<Object>();
 
+		// 检测＠ControllerAdvice类上的方法：@ModelAttribute/@InitBinder/或者该类实现RequestBodyAdvice ResponseBodyAdvice
 		for (ControllerAdviceBean bean : beans) {
 			Set<Method> attrMethods = MethodIntrospector.selectMethods(bean.getBeanType(), MODEL_ATTRIBUTE_METHODS);
 			if (!attrMethods.isEmpty()) {
@@ -600,12 +602,13 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		resolvers.add(new SessionStatusMethodArgumentResolver());
 		resolvers.add(new UriComponentsBuilderMethodArgumentResolver());
 
-		// Custom arguments
+		// TODO Custom arguments，自定义的放在后面
 		if (getCustomArgumentResolvers() != null) {
 			resolvers.addAll(getCustomArgumentResolvers());
 		}
 
 		// Catch-all
+        // 普通类型注入
 		resolvers.add(new RequestParamMethodArgumentResolver(getBeanFactory(), true));
 		// TODO 兜底的那一个
 		resolvers.add(new ServletModelAttributeMethodProcessor(true));
@@ -790,6 +793,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 
 		// 封装了所有的@InitBinder的注解方法
 		// TODO 每次都新建一下
+        // 先放全局@Controller中@InitBinder方法，再添加当前Handler类中的@InitBinder方法
 		WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
 		ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
 
@@ -806,6 +810,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		mavContainer.setIgnoreDefaultModelOnRedirect(this.ignoreDefaultModelOnRedirect);
 
 		AsyncWebRequest asyncWebRequest = WebAsyncUtils.createAsyncWebRequest(request, response);
+		// todo 看看人家怎么用的
 		asyncWebRequest.setTimeout(this.asyncRequestTimeout);
 
 		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
@@ -824,7 +829,8 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			invocableMethod = invocableMethod.wrapConcurrentResult(result);
 		}
 
-		// 调用
+		// TODO 先使用参数解析器获取到所有参数值，再反射调用method，最后调用返回值处理器处理返回值，
+        // TODO 返回值没有返回，可能在返回值处理器中被处理了，也可能放在mavContainer中
 		invocableMethod.invokeAndHandle(webRequest, mavContainer);
 		if (asyncManager.isConcurrentHandlingStarted()) {
 			return null;
@@ -877,6 +883,12 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		return attrMethod;
 	}
 
+    /**
+     * TODO 先放全局@Controller中@InitBinder方法，再添加当前Handler类中的@InitBinder方法
+     * @param handlerMethod
+     * @return
+     * @throws Exception
+     */
 	private WebDataBinderFactory getDataBinderFactory(HandlerMethod handlerMethod) throws Exception {
 		Class<?> handlerType = handlerMethod.getBeanType();
 		Set<Method> methods = this.initBinderCache.get(handlerType);
@@ -903,9 +915,17 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		return createDataBinderFactory(initBinderMethods);
 	}
 
+    /**
+     * 封装每个@InitBinder方法，还是使用InvocableHandlerMethod
+     * @param bean
+     * @param method
+     * @return
+     */
 	private InvocableHandlerMethod createInitBinderMethod(Object bean, Method method) {
 		InvocableHandlerMethod binderMethod = new InvocableHandlerMethod(bean, method);
+		// 参数解析为initBinderArgumentResolvers
 		binderMethod.setHandlerMethodArgumentResolvers(this.initBinderArgumentResolvers);
+		// todo 引进binder全局初始化器
 		binderMethod.setDataBinderFactory(new DefaultDataBinderFactory(this.webBindingInitializer));
 		binderMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
 		return binderMethod;
@@ -922,6 +942,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	protected InitBinderDataBinderFactory createDataBinderFactory(List<InvocableHandlerMethod> binderMethods)
 			throws Exception {
 
+	    // todo 数据绑定工厂
 		return new ServletRequestDataBinderFactory(binderMethods, getWebBindingInitializer());
 	}
 
@@ -929,9 +950,11 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			ModelFactory modelFactory, NativeWebRequest webRequest) throws Exception {
 
 		modelFactory.updateModel(webRequest, mavContainer);
+		// 如果请求已经被处理，则返回modelAndView为null
 		if (mavContainer.isRequestHandled()) {
 			return null;
 		}
+		// 将mavContainer转化为modelAndView
 		ModelMap model = mavContainer.getModel();
 		ModelAndView mav = new ModelAndView(mavContainer.getViewName(), model);
 		if (!mavContainer.isViewReference()) {

@@ -141,6 +141,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	}
 
 	/**
+	 * TODO 一个个参数使用argumentResolvers解析，每个MethodParameter都会被解析一遍
 	 * Get the method argument values for the current request.
 	 */
 	private Object[] getMethodArgumentValues(NativeWebRequest request, ModelAndViewContainer mavContainer,
@@ -220,7 +221,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	protected Object doInvoke(Object... args) throws Exception {
 		ReflectionUtils.makeAccessible(getBridgedMethod());
 		try {
-			logger.info("调用handler：" + getBean() + "的方法：" + getBridgedMethod() + "，参数为：" + Arrays.asList(args));
+			logger.info("反射调用handler：" + getBean() + "的方法：" + getBridgedMethod() + "，参数为：" + Arrays.asList(args));
 			return getBridgedMethod().invoke(getBean(), args);
 		}
 		catch (IllegalArgumentException ex) {

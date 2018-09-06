@@ -84,6 +84,7 @@ public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgu
 	}
 
 	/**
+	 * TODO MethodParameter包装了该参数所在的方法、构造函数、以及参数的对应位置，参数对应的解析器会缓存起来，以便下次直接使用
 	 * Iterate over registered {@link HandlerMethodArgumentResolver}s and invoke the one that supports it.
 	 * @throws IllegalStateException if no suitable {@link HandlerMethodArgumentResolver} is found.
 	 */

@@ -16,18 +16,8 @@
 
 package org.springframework.beans;
 
-import java.beans.PropertyEditor;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.convert.ConversionFailedException;
@@ -37,7 +27,17 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 
+import java.beans.PropertyEditor;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
+ * TODO TypeConverterDelegate使用PropertyEditorRegistry中的PropertyEditor来转换类
  * Internal helper class for converting property values to target types.
  *
  * <p>Works on a given {@link PropertyEditorRegistrySupport} instance.
@@ -68,6 +68,7 @@ class TypeConverterDelegate {
 	}
 
 
+	// TODO support...
 	private final PropertyEditorRegistrySupport propertyEditorRegistry;
 
 	private final Object targetObject;
@@ -144,6 +145,8 @@ class TypeConverterDelegate {
 	}
 
 	/**
+	 * TODO propertyName和oldValue可能为null
+     * 先用customPropertyEditor，再用ConversionService，最后用默认的
 	 * Convert the value to the required type (if necessary from a String),
 	 * for the specified property.
 	 * @param propertyName name of the property
@@ -165,6 +168,7 @@ class TypeConverterDelegate {
 		ConversionFailedException conversionAttemptEx = null;
 
 		// No custom editor but custom ConversionService specified?
+		// TODO 不存在自定义的propertyEditor时，若有ConversionService，则用ConversionService
 		ConversionService conversionService = this.propertyEditorRegistry.getConversionService();
 		if (editor == null && conversionService != null && newValue != null && typeDescriptor != null) {
 			TypeDescriptor sourceTypeDesc = TypeDescriptor.forObject(newValue);
@@ -190,9 +194,11 @@ class TypeConverterDelegate {
 					convertedValue = StringUtils.commaDelimitedListToStringArray((String) convertedValue);
 				}
 			}
+			// TODO editor不存在时，使用默认的
 			if (editor == null) {
 				editor = findDefaultEditor(requiredType);
 			}
+			// TODO 进行真正的转换。
 			convertedValue = doConvertValue(oldValue, convertedValue, requiredType, editor);
 		}
 

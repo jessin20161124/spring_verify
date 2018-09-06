@@ -16,6 +16,18 @@
 
 package org.springframework.http.converter.json;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -23,32 +35,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.KeyDeserializer;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
-import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
-import com.fasterxml.jackson.databind.ser.FilterProvider;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-
-import org.springframework.beans.factory.BeanClassLoaderAware;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-
 /**
  * A {@link FactoryBean} for creating a Jackson 2.x {@link ObjectMapper} (default) or
- * {@link XmlMapper} ({@code createXmlMapper} property set to true) with setters
+ *  ({@code createXmlMapper} property set to true) with setters
  * to enable or disable Jackson features from within XML configuration.
  *
  * <p>It customizes Jackson defaults properties with the following ones:
@@ -154,7 +143,7 @@ public class Jackson2ObjectMapperFactoryBean implements FactoryBean<ObjectMapper
 	}
 
 	/**
-	 * If set to true and no custom {@link ObjectMapper} has been set, a {@link XmlMapper}
+	 * If set to true and no custom {@link ObjectMapper} has been set,
 	 * will be created using its default constructor.
 	 * @since 4.1
 	 */

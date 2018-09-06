@@ -181,6 +181,11 @@ public class ConfigurableWebBindingInitializer implements WebBindingInitializer 
 	}
 
 
+	/**
+	 * TODO 给binder设置一些全局参数，包括conversionService 这个类会在mvc:annotation-driven中注入
+	 * @param binder the DataBinder to initialize
+	 * @param request the web request that the data binding happens within
+	 */
 	@Override
 	public void initBinder(WebDataBinder binder, WebRequest request) {
 		binder.setAutoGrowNestedPaths(this.autoGrowNestedPaths);
@@ -198,6 +203,7 @@ public class ConfigurableWebBindingInitializer implements WebBindingInitializer 
 			binder.setValidator(this.validator);
 		}
 		if (this.conversionService != null) {
+			// TODO AnnotationDrivenBeanDefinitionParser中设置，也就是mvc:annotation-driven conversion-service
 			binder.setConversionService(this.conversionService);
 		}
 		if (this.propertyEditorRegistrars != null) {
