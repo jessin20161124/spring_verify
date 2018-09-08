@@ -72,6 +72,16 @@ public class ModelAndViewMethodReturnValueHandler implements HandlerMethodReturn
 		return ModelAndView.class.isAssignableFrom(returnType.getParameterType());
 	}
 
+	/**
+	 * TODO 最后返回值为ModelAndView，设置到mavContainer中返回
+	 * @param returnValue the value returned from the handler method
+	 * @param returnType the type of the return value. This type must have
+	 * previously been passed to {@link #supportsReturnType} which must
+	 * have returned {@code true}.
+	 * @param mavContainer the ModelAndViewContainer for the current request
+	 * @param webRequest the current request
+	 * @throws Exception
+	 */
 	@Override
 	public void handleReturnValue(Object returnValue, MethodParameter returnType,
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest) throws Exception {

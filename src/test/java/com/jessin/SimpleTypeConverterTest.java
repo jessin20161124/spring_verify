@@ -26,7 +26,7 @@ public class SimpleTypeConverterTest {
     private class DatePropertyEditor extends PropertyEditorSupport {
         @Override
         public void setAsText(String text) throws java.lang.IllegalArgumentException {
-           SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
             try {
                 Date date = simpleDateFormat.parse(text);
                 setValue(date);
@@ -64,8 +64,8 @@ public class SimpleTypeConverterTest {
         public <T> T convert(Object source, Class<T> targetType) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-mm-dd");
             try {
-                Date date = simpleDateFormat.parse((String)source);
-                return (T)date;
+                Date date = simpleDateFormat.parse((String) source);
+                return (T) date;
             } catch (ParseException e) {
                 e.printStackTrace();
             }

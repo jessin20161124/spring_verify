@@ -113,6 +113,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 		logger.info("解析参数：" + name + " 实例化属性为：" + attribute);
 
 		// TODO binderFactory是ServletRequestDataBinderFactory
+		// TODO name是参数名，attribute是参数值，user.name=a&user.age=1注入？？绑定到attribute，即target上
 		// RequestMappingHandlerAdapter#createDataBinderFactory
 		WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);
 		if (binder.getTarget() != null) {
@@ -215,6 +216,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 
 		if (returnValue != null) {
 			String name = ModelFactory.getNameForReturnValue(returnValue, returnType);
+			// TODO 添加到mavContainer的model中
 			mavContainer.addAttribute(name, returnValue);
 		}
 	}

@@ -16,13 +16,13 @@
 
 package org.springframework.http.converter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Implementation of {@link HttpMessageConverter} that can read and write byte arrays.
@@ -38,6 +38,7 @@ import org.springframework.util.StreamUtils;
 public class ByteArrayHttpMessageConverter extends AbstractHttpMessageConverter<byte[]> {
 
 	/**
+	 * TODO 设置支持的媒体类型，最终会被用来判断是否支持当前返回值，MEDIA.all是兜底，表示一定会被处理
 	 * Create a new instance of the {@code ByteArrayHttpMessageConverter}.
 	 */
 	public ByteArrayHttpMessageConverter() {

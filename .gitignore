@@ -4,3 +4,4 @@ target/
 *.iml
 logs/
 *.log
+log.dir_IS_UNDEFINED/

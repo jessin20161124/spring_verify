@@ -801,6 +801,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		ServletInvocableHandlerMethod invocableMethod = createInvocableHandlerMethod(handlerMethod);
 		invocableMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 		invocableMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
+		// TODO binderFactory可能需要传递给argumentResolvers进行参数转换。
 		invocableMethod.setDataBinderFactory(binderFactory);
 		invocableMethod.setParameterNameDiscoverer(this.parameterNameDiscoverer);
 
@@ -950,7 +951,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			ModelFactory modelFactory, NativeWebRequest webRequest) throws Exception {
 
 		modelFactory.updateModel(webRequest, mavContainer);
-		// 如果请求已经被处理，则返回modelAndView为null
+		// TODO 如果请求已经被处理，则返回modelAndView为null
 		if (mavContainer.isRequestHandled()) {
 			return null;
 		}

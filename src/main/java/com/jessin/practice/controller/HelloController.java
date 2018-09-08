@@ -7,7 +7,6 @@ import com.jessin.practice.service.ChildService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Controller;
@@ -19,6 +18,10 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.beans.PropertyEditorSupport;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -64,9 +67,9 @@ public class HelloController {
     // 日期入参格式化
     @InitBinder
     public void init(WebDataBinder dataBinder) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        CustomDateEditor dateEditor = new CustomDateEditor(dateFormat, true);
-        dataBinder.registerCustomEditor(Date.class, dateEditor);
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        CustomDateEditor dateEditor = new CustomDateEditor(dateFormat, true);
+//        dataBinder.registerCustomEditor(Date.class, dateEditor);
         //dataBinder.registerCustomEditor(List.class, new UserEditor());
     }
 
@@ -150,6 +153,29 @@ public class HelloController {
     @RequestMapping("/showUserListByJsp")
     public String showUserByJsp(@ModelAttribute User user) {
         return "showUserListByJsp";
+    }
+
+    /**
+     * 由StringHttpMessageConverter处理，abc含有中文时，将是乱码，因为返回值使用ISO8859-1编码，而前端使用UTF-8编码
+     * @param abc
+     * @return
+     */
+    @RequestMapping("/sayHello")
+    @ResponseBody
+    public String sayHello(String abc) {
+        return abc;
+    }
+
+    @RequestMapping(value = "/fetchImage/{fileName}", produces = "application/octet-stream")
+    @ResponseBody
+    public byte[] getImage(@PathVariable("fileName") String fileName) {
+        Path path = Paths.get(this.getClass().getResource("/" + fileName).getPath());
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
     }
 
     @PostConstruct

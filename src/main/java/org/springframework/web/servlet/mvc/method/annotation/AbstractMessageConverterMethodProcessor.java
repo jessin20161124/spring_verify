@@ -178,12 +178,12 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 		for (MediaType requestedType : requestedMediaTypes) {
 			for (MediaType producibleType : producibleMediaTypes) {
 				if (requestedType.isCompatibleWith(producibleType)) {
-                    logger.info("请求类型：" + requestedType + "兼容服务端可以生成的类型" + producibleType);
+                    logger.info("客服端请求类型：" + requestedType + "兼容服务端可以生成的类型" + producibleType);
                     compatibleMediaTypes.add(getMostSpecificMediaType(requestedType, producibleType));
 				}
 			}
 		}
-		logger.info("兼容媒体类型" + compatibleMediaTypes);
+		logger.info("双方都接受的媒体类型" + compatibleMediaTypes);
 		if (compatibleMediaTypes.isEmpty()) {
 			// 有返回值时，兼容媒体类型不能为空
 			if (value != null) {
@@ -307,6 +307,7 @@ public abstract class AbstractMessageConverterMethodProcessor extends AbstractMe
 						result.addAll(converter.getSupportedMediaTypes());
 					}
 				}
+				// 每次服务端支持的媒体类型与返回值valueClass也有关系
 				else if (converter.canWrite(valueClass, null)) {
 					result.addAll(converter.getSupportedMediaTypes());
 				}

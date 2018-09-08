@@ -159,6 +159,7 @@ public class RequestResponseBodyMethodProcessor extends AbstractMessageConverter
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest)
 			throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
 
+		// TODO 已经处理过了，返回值可以忽略。。。mv 最后为null，不用处理。。
 		mavContainer.setRequestHandled(true);
 		logger.info("处理responseBody返回值");
 		// Try even with null return value. ResponseBodyAdvice could get involved.
