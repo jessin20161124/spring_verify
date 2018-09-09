@@ -16,6 +16,8 @@
 
 package org.springframework.web.method.annotation;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.beans.factory.config.BeanExpressionContext;
@@ -56,6 +58,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.1
  */
 public abstract class AbstractNamedValueMethodArgumentResolver implements HandlerMethodArgumentResolver {
+
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final ConfigurableBeanFactory configurableBeanFactory;
 
@@ -108,6 +112,7 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
             // 该binder已经被初始化了，注入了WebBindingInitializer相关设置和调用了匹配的所有＠InitBinder方法对binder进行处理，binder作为最后一个入参
 			WebDataBinder binder = binderFactory.createBinder(webRequest, null, namedValueInfo.name);
 			try {
+				logger.info("开始调用binder进行参数转化，binder : {}, arg : {}, paramType : {}", binder, arg, paramType);
 				arg = binder.convertIfNecessary(arg, paramType, parameter);
 			}
 			catch (ConversionNotSupportedException ex) {

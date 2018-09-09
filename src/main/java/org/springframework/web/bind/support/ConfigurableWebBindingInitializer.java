@@ -16,6 +16,8 @@
 
 package org.springframework.web.bind.support;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.PropertyEditorRegistrar;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.validation.BindingErrorProcessor;
@@ -39,6 +41,7 @@ import org.springframework.web.context.request.WebRequest;
  * @see #setPropertyEditorRegistrar
  */
 public class ConfigurableWebBindingInitializer implements WebBindingInitializer {
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	private boolean autoGrowNestedPaths = true;
 
@@ -188,6 +191,7 @@ public class ConfigurableWebBindingInitializer implements WebBindingInitializer 
 	 */
 	@Override
 	public void initBinder(WebDataBinder binder, WebRequest request) {
+		logger.info("调用全局WebBindingInitializer初始化WebDataBinder");
 		binder.setAutoGrowNestedPaths(this.autoGrowNestedPaths);
 		if (this.directFieldAccess) {
 			binder.initDirectFieldAccess();

@@ -1,5 +1,6 @@
 package com.jessin.practice.controller;
 
+import com.google.common.collect.Maps;
 import com.jessin.practice.bean.User;
 import com.jessin.practice.event.HelloEvent;
 import com.jessin.practice.service.AbstractService;
@@ -9,10 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import javax.annotation.PostConstruct;
@@ -28,7 +32,7 @@ import java.util.*;
 /**
  * Created by jessin on 17-7-22.
  */
-@RestController
+@Controller
 public class HelloController {
 
     @Resource
@@ -73,10 +77,28 @@ public class HelloController {
         //dataBinder.registerCustomEditor(List.class, new UserEditor());
     }
 
+    /**
+     * 使用@RequestParam注解，表示使用RequestParamMethodHandlerResolver进行处理
+     * 否则使用兜底的ModelAttributeHandlerResolver进行处理
+     *
+     * 另外，返回值如果没有标注@ResponseBody，则使员工ModelAttributeHandlerResolver进行解析，
+     * 这时会把返回值User放到ModelAndView中，但是没有View，所以会使用默认的view，也就是该url；
+     * 由于没有注入视图解析器，默认从dispatchServlet.properties中获取到InternalResourceViewResolver得到
+     * InternalResourceView，最后render时，由于资源不存在，所以出错了。。
+     * @param user
+     * @return
+     */
+    @RequestMapping("/sayUser")
+    @ResponseBody
+    public User sayUser(@RequestParam User user) {
+        return user;
+    }
+
 //    @RequestMapping(value = "/hello", params = "car=123")
 
     @RequestMapping(value = "/hello", produces = "application/json; charset=UTF-8")
     @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     // 可以通过注入数组，调用set方法设置属性。
     // curl 'http://localhost:8081/practice/hello?name=tom&car=1342&car=13412' --data-urlencode 'car=我爱你'
     public Map<String, Object> sayHello(User user, String abc) {
@@ -95,9 +117,6 @@ public class HelloController {
         LOGGER.info(".................发布事件，map为:{}..........................", map);
         LOGGER.info("获取到带有所有的Controller bean：{}", applicationContext.getBeansWithAnnotation(Controller.class));
         LOGGER.info("获取RequestMappingHandlerAdapter所有实例的beanName : {}", applicationContext.getBeanNamesForType(RequestMappingHandlerAdapter.class));
-//        LOGGER.info("获取RequestMappingHandlerAdapter : {}, {}",
-//                applicationContext.getBean(RequestMappingHandlerAdapter.class.getName()),
-//                applicationContext.getBean(RequestMappingHandlerAdapter.class.getName() + "#0"));
 
         applicationContext.publishEvent(new HelloEvent("say hello"));
         applicationContext.publishEvent("just string");
@@ -150,6 +169,11 @@ public class HelloController {
         return "userListFtl";
     }
 
+    /**
+     * ViewNameMethodReturnValueHandler进行处理，返回的字符串即为视图名，而@ModelAttribute会把参数放入model中，ｋey为user
+     * @param user
+     * @return
+     */
     @RequestMapping("/showUserListByJsp")
     public String showUserByJsp(@ModelAttribute User user) {
         return "showUserListByJsp";
@@ -169,6 +193,7 @@ public class HelloController {
     @RequestMapping(value = "/fetchImage/{fileName}", produces = "application/octet-stream")
     @ResponseBody
     public byte[] getImage(@PathVariable("fileName") String fileName) {
+        // TODO 改用ClassPathResource
         Path path = Paths.get(this.getClass().getResource("/" + fileName).getPath());
         try {
             return Files.readAllBytes(path);
@@ -189,4 +214,13 @@ public class HelloController {
         LOGGER.info("注解为：{}, {}", responseBody, controller);
     }
 
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public Map<String, Object> processException(MissingServletRequestParameterException exception, HandlerMethod handlerMethod) {
+        LOGGER.info(handlerMethod + "抛出特别的异常了啊 : " + exception.getMessage());
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("error", "抛出异常了");
+        return map;
+    }
 }

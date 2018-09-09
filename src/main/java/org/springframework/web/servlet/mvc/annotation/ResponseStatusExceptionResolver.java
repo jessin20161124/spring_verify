@@ -16,9 +16,7 @@
 
 package org.springframework.web.servlet.mvc.annotation;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -27,6 +25,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * A {@link org.springframework.web.servlet.HandlerExceptionResolver
@@ -47,6 +48,7 @@ import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
  * @since 3.0
  * @see AnnotatedElementUtils#findMergedAnnotation
  */
+@Slf4j
 public class ResponseStatusExceptionResolver extends AbstractHandlerExceptionResolver implements MessageSourceAware {
 
 	private MessageSource messageSource;
@@ -54,6 +56,7 @@ public class ResponseStatusExceptionResolver extends AbstractHandlerExceptionRes
 
 	@Override
 	public void setMessageSource(MessageSource messageSource) {
+		log.info("设置messageSource: {}", messageSource);
 		this.messageSource = messageSource;
 	}
 
@@ -72,6 +75,7 @@ public class ResponseStatusExceptionResolver extends AbstractHandlerExceptionRes
 			}
 		}
 		else if (ex.getCause() instanceof Exception) {
+			// TODO 看cause的那个是否有@ResponseStatus注解
 			ex = (Exception) ex.getCause();
 			return doResolveException(request, response, handler, ex);
 		}
@@ -101,6 +105,7 @@ public class ResponseStatusExceptionResolver extends AbstractHandlerExceptionRes
 		String reason = responseStatus.reason();
 		if (this.messageSource != null) {
 			reason = this.messageSource.getMessage(reason, null, reason, LocaleContextHolder.getLocale());
+			log.info("messageSource不为null，reason替换为：{}", reason);
 		}
 		if (!StringUtils.hasLength(reason)) {
 			response.sendError(statusCode);

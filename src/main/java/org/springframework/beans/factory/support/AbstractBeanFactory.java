@@ -768,6 +768,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	public String resolveEmbeddedValue(String value) {
 		// 不覆盖局部变量
 		String result = value;
+		logger.info("所有的值解析器为：" + embeddedValueResolvers);
 		for (StringValueResolver resolver : this.embeddedValueResolvers) {
 			if (result == null) {
 				return null;

@@ -16,8 +16,8 @@
 
 package org.springframework.web.method.annotation;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -57,7 +57,7 @@ import java.util.Map;
  */
 public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResolver, HandlerMethodReturnValueHandler {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final boolean annotationNotRequired;
 
@@ -216,6 +216,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 
 		if (returnValue != null) {
 			String name = ModelFactory.getNameForReturnValue(returnValue, returnType);
+			logger.info("将name={},value={}加入model中", name, returnValue);
 			// TODO 添加到mavContainer的model中
 			mavContainer.addAttribute(name, returnValue);
 		}

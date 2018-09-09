@@ -981,11 +981,21 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 	}
 
+	/**
+	 * byType和注解注入
+	 * @param descriptor
+	 * @param beanName
+	 * @param autowiredBeanNames
+	 * @param typeConverter
+	 * @return
+	 * @throws BeansException
+	 */
 	public Object doResolveDependency(DependencyDescriptor descriptor, String beanName,
 			Set<String> autowiredBeanNames, TypeConverter typeConverter) throws BeansException {
 		Class<?> type = descriptor.getDependencyType();
 		logger.info("bean：" + beanName + "依赖类型" + type);
 		// 获取到@Value里面的值
+		logger.info("自动装配候选注入解析器为：" + getAutowireCandidateResolver());
 		Object value = getAutowireCandidateResolver().getSuggestedValue(descriptor);
 		if (value != null) {
 			if (value instanceof String) {

@@ -733,7 +733,6 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			}
 		}
 		else {
-		    logger.info("调用invokeHandlerMethod");
 			// No synchronization on session demanded at all...
 			mav = invokeHandlerMethod(request, response, handlerMethod);
 		}
@@ -790,6 +789,8 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
 
 		ServletWebRequest webRequest = new ServletWebRequest(request, response);
+
+        logger.info("[Spring MVC] 4. 调用invokeHandlerMethod处理request：" + request.getRequestURI());
 
 		// 封装了所有的@InitBinder的注解方法
 		// TODO 每次都新建一下
@@ -917,7 +918,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	}
 
     /**
-     * 封装每个@InitBinder方法，还是使用InvocableHandlerMethod
+     * TODO 封装每个@InitBinder方法，还是使用InvocableHandlerMethod
      * @param bean
      * @param method
      * @return

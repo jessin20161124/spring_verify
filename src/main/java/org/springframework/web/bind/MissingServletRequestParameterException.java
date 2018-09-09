@@ -23,6 +23,7 @@ package org.springframework.web.bind;
  * @since 2.0.2
  */
 @SuppressWarnings("serial")
+//@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "参数非法")
 public class MissingServletRequestParameterException extends ServletRequestBindingException {
 
 	private final String parameterName;

@@ -15,25 +15,25 @@
        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
     <!--<bean id="simpleUrlMapping"-->
-          <!--class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">-->
-        <!--<property name="mappings">-->
-            <!--<props>-->
-                <!--<prop key="/userList">simpleController</prop>-->
-            <!--</props>-->
-        <!--</property>-->
+    <!--class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">-->
+    <!--<property name="mappings">-->
+    <!--<props>-->
+    <!--<prop key="/userList">simpleController</prop>-->
+    <!--</props>-->
+    <!--</property>-->
     <!--</bean>-->
 
     <!--<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer"-->
-          <!--p:templateLoaderPath="/WEB-INF/ftl"-->
-          <!--p:defaultEncoding="UTF-8"-->
+    <!--p:templateLoaderPath="/WEB-INF/ftl"-->
+    <!--p:defaultEncoding="UTF-8"-->
 
     <!--&gt;-->
 
-        <!--<property name="freemarkerSettings">-->
-            <!--<props>-->
-                <!--<prop key="classic_compatible">true</prop>-->
-            <!--</props>-->
-        <!--</property>-->
+    <!--<property name="freemarkerSettings">-->
+    <!--<props>-->
+    <!--<prop key="classic_compatible">true</prop>-->
+    <!--</props>-->
+    <!--</property>-->
     <!--</bean>-->
 
     <!--&lt;!&ndash; 扫描类包，将标注Spring注解的类自动转化Bean，同时完成Bean的注入 &ndash;&gt;-->
@@ -45,18 +45,16 @@
 
 
     <!--<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver"-->
-          <!--p:order="5"-->
-          <!--p:suffix=".ftl"-->
-          <!--p:contentType="text/html; charset=utf-8"-->
+    <!--p:order="5"-->
+    <!--p:suffix=".ftl"-->
+    <!--p:contentType="text/html; charset=utf-8"-->
     <!--/>-->
     <!--&lt;!&ndash; 配置视图解析器，将ModelAndView及字符串解析为具体的页面，即逻辑视图名转化为/WEB-INF/views/逻辑视图名.jsp &ndash;&gt;-->
     <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"-->
-          <!--p:viewClass="org.springframework.web.servlet.view.JstlView"-->
-          <!--p:prefix="/WEB-INF/views/"-->
-          <!--p:suffix=".jsp"-->
+    <!--p:viewClass="org.springframework.web.servlet.view.JstlView"-->
+    <!--p:prefix="/WEB-INF/views/"-->
+    <!--p:suffix=".jsp"-->
     <!--/>-->
-    <!-- 需要这一个配置，使得下面的json配置有效-->
-    <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>-->
 
     <!--</bean>-->
     <!-- TODO 这种情况有两个RequestMappingHandlerAdapter，
@@ -71,16 +69,19 @@
         <!--</mvc:message-converters>-->
     </mvc:annotation-driven>
 
-    <bean id = "formattingConversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+    <bean id="formattingConversionService"
+          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="converters">
             <set>
                 <bean class="com.jessin.practice.bean.String2DateConverter"></bean>
             </set>
         </property>
     </bean>
-     <!--完成JSON格式数据的自动转换-->
+    <!--完成JSON格式数据的自动转换-->
     <!-- 默认beanName为类全名#0 -->
+    <!-- order = -1表示排到最前面，将会生效-->
     <!--<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">-->
+        <!--<property name="order" value="-1"></property>-->
         <!--<property name="messageConverters">-->
             <!--<list>-->
                 <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
@@ -99,5 +100,5 @@
 
 
     <!-- PropertyPlaceholderConfigurer是一个BeanFactoryPostProcessor，只在该容器中起作用，不可继承-->
-    <context:property-placeholder location="classpath*:/test.properties" />
+    <context:property-placeholder location="classpath*:/test.properties"/>
 </beans>

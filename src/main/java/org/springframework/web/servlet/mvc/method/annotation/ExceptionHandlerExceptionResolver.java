@@ -394,6 +394,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 		if (handlerMethod != null) {
 			ExceptionHandlerMethodResolver resolver = this.exceptionHandlerCache.get(handlerType);
 			if (resolver == null) {
+			    // Controller所在的类
 				resolver = new ExceptionHandlerMethodResolver(handlerType);
 				this.exceptionHandlerCache.put(handlerType, resolver);
 			}
@@ -407,8 +408,10 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 		for (Entry<ControllerAdviceBean, ExceptionHandlerMethodResolver> entry : this.exceptionHandlerAdviceCache.entrySet()) {
 			if (entry.getKey().isApplicableToBeanType(handlerType)) {
 				ExceptionHandlerMethodResolver resolver = entry.getValue();
+				// 能处理该exception的方法
 				Method method = resolver.resolveMethod(exception);
 				if (method != null) {
+					// TODO @ControllerAdvice所在的类，和对应的方法
 					return new ServletInvocableHandlerMethod(entry.getKey().resolveBean(), method);
 				}
 			}

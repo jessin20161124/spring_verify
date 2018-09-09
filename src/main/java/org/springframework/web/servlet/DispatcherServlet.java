@@ -16,7 +16,6 @@
 
 package org.springframework.web.servlet;
 
-import com.alibaba.fastjson.JSON;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -25,6 +24,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.i18n.LocaleContext;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
@@ -610,7 +610,18 @@ public class DispatcherServlet extends FrameworkServlet {
 			 * org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter@162bbff,
 			 * org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter@22aa337d,
 			 */
-			logger.info("检测所有的处理器适配器，结果为：" + JSON.toJSONString(matchingBeans.keySet()) + "类加载器为：" + getClass().getClassLoader());
+			for (HandlerAdapter handlerAdapter : handlerAdapters) {
+				if (handlerAdapter instanceof Ordered) {
+                    logger.info("检测所有的处理器适配器，"
+                            + handlerAdapter + "结果为：" +
+                            ((Ordered) handlerAdapter).getOrder() +
+                            "，类加载器为：" + getClass().getClassLoader());
+                } else {
+                    logger.info("检测所有的处理器适配器，" + handlerAdapter + "，类加载器为："
+                            + getClass().getClassLoader());
+
+                }
+			}
 		}
 		else {
 			try {
@@ -945,7 +956,6 @@ public class DispatcherServlet extends FrameworkServlet {
 					noHandlerFound(processedRequest, response);
 					return;
 				}
-				logger.info("获取到执行链：" + mappedHandler);
 				// RequestMapping注解的方法，使用RequestMappingHandlerAdapter来适配。
 				// Determine handler adapter for the current request.
                 // HandlerMethod
@@ -964,21 +974,24 @@ public class DispatcherServlet extends FrameworkServlet {
 					}
 				}
 
-				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
+                logger.info("[Spring MVC] 3. 调用拦截器预处理" + request.getRequestURI());
+                if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
 				// 实际方法入参处理，处理器方法调用，以及返回值处理都在这里。
 				// Actually invoke the handler.
-				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+                logger.info("[Spring MVC] 4. 实际调用" + ha + "处理request：" + request.getRequestURI());
+                mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
 				}
-				logger.info("获取到mv : " + mv);
+                logger.info("[Spring MVC] 5. " + ha + "处理request：" + request.getRequestURI() + "，得到mv：" + mv);
 
-				applyDefaultViewName(processedRequest, mv);
-				mappedHandler.applyPostHandle(processedRequest, response, mv);
+                applyDefaultViewName(processedRequest, mv);
+                logger.info("[Spring MVC] 6. 调用拦截器后处理" + request.getRequestURI());
+                mappedHandler.applyPostHandle(processedRequest, response, mv);
 			}
 			catch (Exception ex) {
 				logger.error("抛出异常啊", ex);
@@ -1036,21 +1049,21 @@ public class DispatcherServlet extends FrameworkServlet {
 				mv = processHandlerException(request, response, handler, exception);
 				errorView = (mv != null);
 			}
-		}
+            logger.info("[Spring MVC] 7. 调用handler处理请求：" + request.getRequestURI() + "出现异常，获取异常视图");
 
-		// Did the handler return a view to render?
+        }
+
+		// TODO mv == null 不用渲染了
 		if (mv != null && !mv.wasCleared()) {
-			render(mv, request, response);
+            logger.info("[Spring MVC] 7. 请求：" + request.getRequestURI() + "渲染mv：" + mv);
+            render(mv, request, response);
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
 			}
 		}
 		else {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Null ModelAndView returned to DispatcherServlet with name '" + getServletName() +
-						"': assuming HandlerAdapter completed request handling");
-			}
-		}
+            logger.info("[Spring MVC] 7. 请求：" + request.getRequestURI() + "没有返回视图，假设handlerAdapter已经完成请求处理");
+        }
 
 		if (WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) {
 			// Concurrent handling started during a forward
@@ -1058,7 +1071,8 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		if (mappedHandler != null) {
-			mappedHandler.triggerAfterCompletion(request, response, null);
+            logger.info("[Spring MVC] 8. 调用拦截器渲染后处理" + request.getRequestURI());
+            mappedHandler.triggerAfterCompletion(request, response, null);
 		}
 	}
 
@@ -1130,12 +1144,12 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
 		for (HandlerMapping hm : this.handlerMappings) {
-			if (logger.isInfoEnabled()) {
-				logger.info("Testing handler map [" + hm + "] in DispatcherServlet with name '" + getServletName() + "'");
-			}
+			logger.info("[Spring MVC] 1. 判断" + hm + "能否处理request：" + request.getRequestURI());
 			HandlerExecutionChain handler = hm.getHandler(request);
 			if (handler != null) {
-				return handler;
+                logger.info("[Spring MVC] 1. 针对请求" + request.getRequestURI() + "获取handlerExecutionChain");
+                logger.info("[Spring MVC] 1. " + hm + "能处理request：" + request.getRequestURI() + "，对应的执行链为：" + handler);
+                return handler;
 			}
 		}
 		return null;
@@ -1170,9 +1184,10 @@ public class DispatcherServlet extends FrameworkServlet {
 	 */
 	protected HandlerAdapter getHandlerAdapter(Object handler) throws ServletException {
 		for (HandlerAdapter ha : this.handlerAdapters) {
-            logger.info("测试handlerAdapter [" + ha + "]");
+            logger.info("[Spring MVC] 2. 测试handlerAdapter [" + ha + "]是否支持handler : " + handler);
 			if (ha.supports(handler)) {
-				return ha;
+                logger.info("[Spring MVC] 2. handlerAdapter [" + ha + "]支持handler : " + handler + "！！！");
+                return ha;
 			}
 		}
 		throw new ServletException("No adapter for handler [" + handler +
@@ -1197,11 +1212,12 @@ public class DispatcherServlet extends FrameworkServlet {
 		for (HandlerExceptionResolver handlerExceptionResolver : this.handlerExceptionResolvers) {
 			exMv = handlerExceptionResolver.resolveException(request, response, handler, ex);
 			if (exMv != null) {
-				logger.info("调用handlerExceptionResolver处理抛出的异常，hanlderExceptionResolver为：" + handlerExceptionResolver.getClass().getName());
+				logger.info("7. 调用handlerExceptionResolver处理抛出的异常，hanlderExceptionResolver为：" + handlerExceptionResolver.getClass().getName());
 				break;
 			}
 		}
 		if (exMv != null) {
+		    // TODO 为new ModelAndView()直接返回，不再渲染
 			if (exMv.isEmpty()) {
 				request.setAttribute(EXCEPTION_ATTRIBUTE, ex);
 				return null;
@@ -1236,8 +1252,8 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		View view;
 		if (mv.isReference()) {
-			logger.info("渲染视图前解析逻辑视图名" + mv.getViewName());
-			// We need to resolve the view name.
+            logger.info("[Spring MVC] 7. 渲染视图前解析逻辑视图名" + mv.getViewName() + "对应的请求为：" + request.getRequestURI());
+            // We need to resolve the view name.
 			view = resolveViewName(mv.getViewName(), mv.getModelInternal(), locale, request);
 			if (view == null) {
 				throw new ServletException("Could not resolve view with name '" + mv.getViewName() +
@@ -1247,7 +1263,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		else {
 			// No need to lookup: the ModelAndView object contains the actual View object.
 			view = mv.getView();
-			logger.info("渲染视图时已经得到真正的视图");
+            logger.info("[Spring MVC] 7. 渲染视图时已经得到真正的视图" + view + "对应的请求为：" + request.getRequestURI());
 			if (view == null) {
 				throw new ServletException("ModelAndView [" + mv + "] neither contains a view name nor a " +
 						"View object in servlet with name '" + getServletName() + "'");
@@ -1259,7 +1275,8 @@ public class DispatcherServlet extends FrameworkServlet {
 			logger.debug("Rendering view [" + view + "] in DispatcherServlet with name '" + getServletName() + "'");
 		}
 		try {
-			view.render(mv.getModelInternal(), request, response);
+            logger.info("[Spring MVC] 7. 开始用数据：" + mv.getModelInternal() + "渲染视图" + view + "对应的请求为：" + request.getRequestURI());
+            view.render(mv.getModelInternal(), request, response);
 		}
 		catch (Exception ex) {
 			if (logger.isDebugEnabled()) {
@@ -1298,9 +1315,11 @@ public class DispatcherServlet extends FrameworkServlet {
 			HttpServletRequest request) throws Exception {
 
 		for (ViewResolver viewResolver : this.viewResolvers) {
-			View view = viewResolver.resolveViewName(viewName, locale);
+            logger.info("[Spring MVC] 7. 寻找视图解析器解析逻辑视图名" + viewName + "对应的请求为：" + request.getRequestURI());
+            View view = viewResolver.resolveViewName(viewName, locale);
 			if (view != null) {
-				return view;
+                logger.info("[Spring MVC] 7. 视图解析器解析逻辑视图名" + viewName + "对应的请求为：" + request.getRequestURI() + "，得到view：" + view);
+                return view;
 			}
 		}
 		return null;

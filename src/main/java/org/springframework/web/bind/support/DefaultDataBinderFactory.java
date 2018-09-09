@@ -16,8 +16,11 @@
 
 package org.springframework.web.bind.support;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.request.NativeWebRequest;
+
 
 /**
  * Create a {@link WebRequestDataBinder} instance and initialize it with a
@@ -27,6 +30,8 @@ import org.springframework.web.context.request.NativeWebRequest;
  * @since 3.1
  */
 public class DefaultDataBinderFactory implements WebDataBinderFactory {
+
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	private final WebBindingInitializer initializer;
 
@@ -51,6 +56,7 @@ public class DefaultDataBinderFactory implements WebDataBinderFactory {
 	public final WebDataBinder createBinder(NativeWebRequest webRequest, Object target, String objectName)
 			throws Exception {
 
+		logger.info("为objectName:{}，target:{}，创建WebDataBinder", objectName, target);
 		// ToDo 返回WebRequestDataBinder，在ServletRequestDataBinderFactory会被替换为ExtendedServletRequestDataBinder
 		WebDataBinder dataBinder = createBinderInstance(target, objectName, webRequest);
 		if (this.initializer != null) {

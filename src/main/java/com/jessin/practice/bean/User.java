@@ -33,6 +33,8 @@ public class User implements InitializingBean{
     @Value("${agent.list}")
     private String[] agentList;
 
+    private Integer age;
+
     public User(){
         LOGGER.info("user构造函数初始化，name：{}", name);
     }
@@ -83,6 +85,15 @@ public class User implements InitializingBean{
         this.agentList = agentList;
     }
 
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    @Override
     public String toString(){
         String ret = JSONObject.toJSONString(this);
         return ret;
@@ -92,6 +103,9 @@ public class User implements InitializingBean{
     private void init(){
         LOGGER.info("postConstruct init user, name：{}", name);
     }
+
+
+    @Override
     public void afterPropertiesSet() throws Exception {
         LOGGER.info("afterPropertiesSet_____：{}", this);
     }

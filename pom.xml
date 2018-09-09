@@ -19,6 +19,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.18</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
@@ -471,6 +477,8 @@
                 <configuration>
                     <port>8081</port>
                     <path>/</path>
+                    <!-- 下面这行很关键，不然请求参数含有中文会出现乱码 -->
+                    <uriEncoding>utf-8</uriEncoding>
                 </configuration>
             </plugin>
             <plugin>

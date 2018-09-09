@@ -16,9 +16,6 @@
 
 package org.springframework.beans.factory.config;
 
-import java.util.Properties;
-import java.util.Set;
-
 import org.springframework.beans.BeansException;
 import org.springframework.core.Constants;
 import org.springframework.core.SpringProperties;
@@ -26,6 +23,9 @@ import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 import org.springframework.util.StringValueResolver;
+
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * {@link PlaceholderConfigurerSupport} subclass that resolves ${...} placeholders
@@ -137,6 +137,76 @@ public class PropertyPlaceholderConfigurer extends PlaceholderConfigurerSupport 
 		this.searchSystemEnvironment = searchSystemEnvironment;
 	}
 
+
+	/**
+	 * Visit each bean definition in the given bean factory and attempt to replace ${...} property
+	 * placeholders with values from the given properties.
+	 */
+	@Override
+	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props)
+			throws BeansException {
+
+		// TODO　在下面
+		StringValueResolver valueResolver = new PlaceholderResolvingStringValueResolver(props);
+		doProcessProperties(beanFactoryToProcess, valueResolver);
+	}
+
+	/**
+	 * Parse the given String value for placeholder resolution.
+	 * @param strVal the String value to parse
+	 * @param props the Properties to resolve placeholders against
+	 * @param visitedPlaceholders the placeholders that have already been visited
+	 * during the current resolution attempt (ignored in this version of the code)
+	 * @deprecated as of Spring 3.0, in favor of using {@link #resolvePlaceholder}
+	 * with {@link org.springframework.util.PropertyPlaceholderHelper}.
+	 * Only retained for compatibility with Spring 2.5 extensions.
+	 */
+	@Deprecated
+	protected String parseStringValue(String strVal, Properties props, Set<?> visitedPlaceholders) {
+		PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper(
+				placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
+		PlaceholderResolver resolver = new PropertyPlaceholderConfigurerResolver(props);
+		return helper.replacePlaceholders(strVal, resolver);
+	}
+
+
+	private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
+
+		private final PropertyPlaceholderHelper helper;
+
+		private final PlaceholderResolver resolver;
+
+		public PlaceholderResolvingStringValueResolver(Properties props) {
+			this.helper = new PropertyPlaceholderHelper(
+					placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
+			// TODO 在下面定义了
+			this.resolver = new PropertyPlaceholderConfigurerResolver(props);
+		}
+
+		// TODO 本质上调用这个方法
+		@Override
+		public String resolveStringValue(String strVal) throws BeansException {
+			String value = this.helper.replacePlaceholders(strVal, this.resolver);
+			return (value.equals(nullValue) ? null : value);
+		}
+	}
+
+
+	private class PropertyPlaceholderConfigurerResolver implements PlaceholderResolver {
+
+		private final Properties props;
+
+		private PropertyPlaceholderConfigurerResolver(Properties props) {
+			this.props = props;
+		}
+
+		@Override
+		public String resolvePlaceholder(String placeholderName) {
+			// TODO 方法在下面
+			return PropertyPlaceholderConfigurer.this.resolvePlaceholder(placeholderName, props, systemPropertiesMode);
+		}
+	}
+
 	/**
 	 * Resolve the given placeholder using the given properties, performing
 	 * a system properties check according to the given mode.
@@ -206,72 +276,6 @@ public class PropertyPlaceholderConfigurer extends PlaceholderConfigurerSupport 
 				logger.debug("Could not access system property '" + key + "': " + ex);
 			}
 			return null;
-		}
-	}
-
-
-	/**
-	 * Visit each bean definition in the given bean factory and attempt to replace ${...} property
-	 * placeholders with values from the given properties.
-	 */
-	@Override
-	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props)
-			throws BeansException {
-
-		StringValueResolver valueResolver = new PlaceholderResolvingStringValueResolver(props);
-		doProcessProperties(beanFactoryToProcess, valueResolver);
-	}
-
-	/**
-	 * Parse the given String value for placeholder resolution.
-	 * @param strVal the String value to parse
-	 * @param props the Properties to resolve placeholders against
-	 * @param visitedPlaceholders the placeholders that have already been visited
-	 * during the current resolution attempt (ignored in this version of the code)
-	 * @deprecated as of Spring 3.0, in favor of using {@link #resolvePlaceholder}
-	 * with {@link org.springframework.util.PropertyPlaceholderHelper}.
-	 * Only retained for compatibility with Spring 2.5 extensions.
-	 */
-	@Deprecated
-	protected String parseStringValue(String strVal, Properties props, Set<?> visitedPlaceholders) {
-		PropertyPlaceholderHelper helper = new PropertyPlaceholderHelper(
-				placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
-		PlaceholderResolver resolver = new PropertyPlaceholderConfigurerResolver(props);
-		return helper.replacePlaceholders(strVal, resolver);
-	}
-
-
-	private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
-
-		private final PropertyPlaceholderHelper helper;
-
-		private final PlaceholderResolver resolver;
-
-		public PlaceholderResolvingStringValueResolver(Properties props) {
-			this.helper = new PropertyPlaceholderHelper(
-					placeholderPrefix, placeholderSuffix, valueSeparator, ignoreUnresolvablePlaceholders);
-			this.resolver = new PropertyPlaceholderConfigurerResolver(props);
-		}
-
-		@Override
-		public String resolveStringValue(String strVal) throws BeansException {
-			String value = this.helper.replacePlaceholders(strVal, this.resolver);
-			return (value.equals(nullValue) ? null : value);
-		}
-	}
-
-
-	private class PropertyPlaceholderConfigurerResolver implements PlaceholderResolver {
-
-		private final Properties props;
-
-		private PropertyPlaceholderConfigurerResolver(Properties props) {
-			this.props = props;
-		}
-
-		@Override
-		public String resolvePlaceholder(String placeholderName) {
-			return PropertyPlaceholderConfigurer.this.resolvePlaceholder(placeholderName, props, systemPropertiesMode);
 		}
 	}
 
