@@ -4,4 +4,4 @@ target/
 *.iml
 logs/
 *.log
-log.dir_IS_UNDEFINED/
+log.dir_IS_UNDEFINED/gongdan.log
