@@ -174,6 +174,9 @@ class TypeConverterDelegate {
 			TypeDescriptor sourceTypeDesc = TypeDescriptor.forObject(newValue);
 			if (conversionService.canConvert(sourceTypeDesc, typeDescriptor)) {
 				try {
+                    if (propertyName != null && propertyName.equals("car")) {
+                        logger.info("找到propertyName：" + propertyName + "的conversionService：" + conversionService);
+                    }
 					return (T) conversionService.convert(newValue, sourceTypeDesc, typeDescriptor);
 				}
 				catch (ConversionFailedException ex) {
@@ -197,6 +200,9 @@ class TypeConverterDelegate {
 			// TODO editor不存在时，使用默认的
 			if (editor == null) {
 				editor = findDefaultEditor(requiredType);
+				if (propertyName != null && propertyName.equals("car")) {
+					logger.info("找到propertyName：" + propertyName + "的属性编辑器：" + editor);
+				}
 			}
 			// TODO 进行真正的转换。
 			convertedValue = doConvertValue(oldValue, convertedValue, requiredType, editor);

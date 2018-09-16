@@ -1,6 +1,7 @@
 package com.jessin.practice.controller;
 
 import com.google.common.collect.Maps;
+import com.jessin.practice.bean.Friend;
 import com.jessin.practice.bean.User;
 import com.jessin.practice.event.HelloEvent;
 import com.jessin.practice.service.AbstractService;
@@ -94,8 +95,36 @@ public class HelloController {
         return user;
     }
 
+    /**
+     * 外部是接口List，不可实例化，ModelAttributeMethodProcessor#createAttribute处理时会出错
+     * @param user
+     * @return
+     */
+//    @RequestMapping("/sayUserList")
+//    @ResponseBody
+//    public List<User> sayUserList(List<User> user) {
+//        return user;
+//    }
+
+    /**
+     * 外部是接口List，不可实例化，ModelAttributeMethodProcessor#createAttribute处理时会出错
+     * @param friend
+     * @return
+     */
+    @RequestMapping("/sayFriend")
+    @ResponseBody
+    public Friend sayFriend(Friend friend) {
+        return friend;
+    }
+
 //    @RequestMapping(value = "/hello", params = "car=123")
 
+    /**
+     * grep 'propertyName' --color=auto -C 50 log.dir_IS_UNDEFINED/gongdan.log
+     * @param user
+     * @param abc
+     * @return
+     */
     @RequestMapping(value = "/hello", produces = "application/json; charset=UTF-8")
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)

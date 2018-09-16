@@ -73,7 +73,8 @@
           class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="converters">
             <set>
-                <bean class="com.jessin.practice.bean.String2DateConverter"></bean>
+                <!--<bean class="com.jessin.practice.bean.String2DateConverter"></bean>-->
+                <bean class="com.jessin.practice.bean.String2UserConverter"></bean>
             </set>
         </property>
     </bean>

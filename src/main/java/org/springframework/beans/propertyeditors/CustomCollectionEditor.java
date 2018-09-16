@@ -108,6 +108,7 @@ public class CustomCollectionEditor extends PropertyEditorSupport {
 	 */
 	@Override
 	public void setValue(Object value) {
+		logger.info("集合" + this.collectionType + "调用属性编辑器");
 		if (value == null && this.nullAsEmptyCollection) {
 			super.setValue(createCollection(this.collectionType, 0));
 		}
@@ -126,6 +127,7 @@ public class CustomCollectionEditor extends PropertyEditorSupport {
 			super.setValue(target);
 		}
 		else if (value.getClass().isArray()) {
+			logger.info("value为数组，集合" + this.collectionType + "调用数组类型的转换器");
 			// Convert array elements to Collection elements.
 			int length = Array.getLength(value);
 			Collection<Object> target = createCollection(this.collectionType, length);

@@ -116,6 +116,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 		// TODO name是参数名，attribute是参数值，user.name=a&user.age=1注入？？绑定到attribute，即target上
 		// RequestMappingHandlerAdapter#createDataBinderFactory
 		WebDataBinder binder = binderFactory.createBinder(webRequest, attribute, name);
+		// TODO target是否为null，复杂model才有target？？将target=null去掉试试
 		if (binder.getTarget() != null) {
 			bindRequestParameters(binder, webRequest);
 			validateIfApplicable(binder, parameter);

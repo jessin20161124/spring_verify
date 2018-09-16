@@ -1,6 +1,7 @@
 package com.jessin.practice.bean;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by zexin.guo on 17-8-5.
@@ -19,11 +21,11 @@ import java.util.Date;
 public class User implements InitializingBean{
     private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
     private int id;
-    private String[] car;
-    // 默认支持yyyy/MM/dd的形式，DateTimeFormat不起作用，不知为何。
+    private List<String> car;
+    // TODO 默认支持yyyy/MM/dd的形式，DateTimeFormat不起作用，不知为何。
     // jsonformat必须配置时区，输出json时时间才会正确
      @DateTimeFormat(pattern="yyyy-MM-dd")
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date birthday;
     // 不通过setter属性来注入，直接注入
     @Value("${name}")
@@ -68,11 +70,11 @@ public class User implements InitializingBean{
         this.name = name;
     }
 
-    public String[] getCar() {
+    public List<String> getCar() {
         return car;
     }
 
-    public void setCar(String[] car) {
+    public void setCar(List<String> car) {
         LOGGER.info("设置car");
         this.car = car;
     }

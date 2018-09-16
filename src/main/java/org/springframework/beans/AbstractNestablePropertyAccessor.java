@@ -240,6 +240,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 
 	@Override
 	public void setPropertyValue(String propertyName, Object value) throws BeansException {
+		logger.info("设置propertyName : " + propertyName + "，value：" + value);
 		AbstractNestablePropertyAccessor nestedPa;
 		try {
 			nestedPa = getPropertyAccessorForPropertyPath(propertyName);
@@ -278,12 +279,12 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 
 	@SuppressWarnings("unchecked")
 	protected void setPropertyValue(PropertyTokenHolder tokens, PropertyValue pv) throws BeansException {
-		logger.info("设置pv" + pv);
 		String propertyName = tokens.canonicalName;
 		String actualName = tokens.actualName;
 
 		if (tokens.keys != null) {
-			// Apply indexes and map keys: fetch value for all keys but the last one.
+            logger.info(Arrays.asList(tokens.keys) + "设置pv：" + pv);
+            // Apply indexes and map keys: fetch value for all keys but the last one.
 			PropertyTokenHolder getterTokens = new PropertyTokenHolder();
 			getterTokens.canonicalName = tokens.canonicalName;
 			getterTokens.actualName = tokens.actualName;
@@ -403,7 +404,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 		}
 
 		else {
-			PropertyHandler ph = getLocalPropertyHandler(actualName);
+            PropertyHandler ph = getLocalPropertyHandler(actualName);
 			if (ph == null || !ph.isWritable()) {
 				if (pv.isOptional()) {
 					if (logger.isDebugEnabled()) {
@@ -420,8 +421,11 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 			try {
 				Object originalValue = pv.getValue();
 				Object valueToApply = originalValue;
-				if (!Boolean.FALSE.equals(pv.conversionNecessary)) {
+                logger.info("token.keys为null，设置pv：" + pv + "，actualName : " + actualName
+                        + "，pv.conversionNecessary:" + pv.conversionNecessary + "，实际的propertyHandler为：" + ph);
+                if (!Boolean.FALSE.equals(pv.conversionNecessary)) {
 					if (pv.isConverted()) {
+					    logger.info("pv已经转化了");
 						valueToApply = pv.getConvertedValue();
 					}
 					else {
@@ -439,9 +443,11 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 								}
 							}
 						}
-						valueToApply = convertForProperty(
+                        valueToApply = convertForProperty(
 								propertyName, oldValue, originalValue, ph.toTypeDescriptor());
-					}
+                        logger.info("将属性" + propertyName + "的值：" + originalValue
+                                + "转化为" + ph.toTypeDescriptor() + "，得到：" + valueToApply);
+                    }
 					pv.getOriginalPropertyValue().conversionNecessary = (valueToApply != originalValue);
 				}
 				ph.setValue(this.wrappedObject, valueToApply);
