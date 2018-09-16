@@ -9,7 +9,7 @@
             <level>error</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${catalina.base}/logs/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/error.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>60</maxHistory>
         </rollingPolicy>
         <encoder charset="UTF-8">
@@ -19,7 +19,7 @@
 
     <appender name="default"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>${log.dir}/gongdan.log</File>
+        <File>logs/gongdan.log</File>
         <prudent>false</prudent>
         <Append>true</Append>
         <encoder>
@@ -27,7 +27,7 @@
             <charset>${encoding}</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.dir}/gongdan.%d{yyyy-MM-dd-HH}.log
+            <fileNamePattern>logs/gongdan.%d{yyyy-MM-dd-HH}.log
             </fileNamePattern>
         </rollingPolicy>
         <maxHistory>7</maxHistory>

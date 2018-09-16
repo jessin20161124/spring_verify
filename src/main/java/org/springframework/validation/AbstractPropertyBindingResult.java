@@ -149,6 +149,7 @@ public abstract class AbstractPropertyBindingResult extends AbstractBindingResul
 	}
 
 	/**
+	 * valueType是目标类型
 	 * This implementation exposes a PropertyEditor adapter for a Formatter,
 	 * if applicable.
 	 */
@@ -170,6 +171,7 @@ public abstract class AbstractPropertyBindingResult extends AbstractBindingResul
 			if (td == null) {
 				td = TypeDescriptor.valueOf(valueTypeForLookup);
 			}
+			// 将字符串转化为td？？
 			if (this.conversionService.canConvert(TypeDescriptor.valueOf(String.class), td)) {
 				editor = new ConvertingPropertyEditorAdapter(this.conversionService, td);
 			}
