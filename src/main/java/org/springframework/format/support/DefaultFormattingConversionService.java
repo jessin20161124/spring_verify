@@ -120,7 +120,7 @@ public class DefaultFormattingConversionService extends FormattingConversionServ
 			// just handling JSR-310 specific date and time types
 			new DateTimeFormatterRegistrar().registerFormatters(formatterRegistry);
 		}
-		// TODO joda Time class存在，这里注入@DateTimeFormat等注解处理
+		// TODO joda Time class存在，这里注入@DateTimeFormat等注解处理，这个类存在时，优先使用这个类
 		if (jodaTimePresent) {
 			// handles Joda-specific types as well as Date, Calendar, Long
 			new JodaTimeFormatterRegistrar().registerFormatters(formatterRegistry);

@@ -209,6 +209,11 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 		return new Property(gpd.getBeanClass(), gpd.getReadMethod(), gpd.getWriteMethod(), gpd.getName());
 	}
 
+	/**
+	 * 属性名对应的是当前包装类的属性PropertyDescriptor，操作
+	 * @param propertyName the name of a local property
+	 * @return
+	 */
 	@Override
 	protected BeanPropertyHandler getLocalPropertyHandler(String propertyName) {
 		PropertyDescriptor pd = getCachedIntrospectionResults().getPropertyDescriptor(propertyName);
@@ -218,6 +223,12 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 		return null;
 	}
 
+	/**
+	 * 返回BeanWrapperImpl
+	 * @param object object wrapped by this PropertyAccessor
+	 * @param nestedPath the nested path of the object
+	 * @return
+	 */
 	@Override
 	protected BeanWrapperImpl newNestedPropertyAccessor(Object object, String nestedPath) {
 		return new BeanWrapperImpl(object, nestedPath, this);
@@ -249,15 +260,27 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 	}
 
 
+	/**
+	 * 封装PropertyDescriptor，对PropertyDescriptor进行操作
+	 */
 	private class BeanPropertyHandler extends PropertyHandler {
 
 		private final PropertyDescriptor pd;
 
+		/**
+		 * 是否有getter方法、setter方法
+		 * TODO pd.getPropertyType是属性类型，还是getter方法入参的类型
+		 * @param pd
+		 */
 		public BeanPropertyHandler(PropertyDescriptor pd) {
 			super(pd.getPropertyType(), pd.getReadMethod() != null, pd.getWriteMethod() != null);
 			this.pd = pd;
 		}
 
+		/**
+		 * TODO getter方法返回值
+		 * @return
+		 */
 		@Override
 		public ResolvableType getResolvableType() {
 			return ResolvableType.forMethodReturnType(this.pd.getReadMethod());

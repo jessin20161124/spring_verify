@@ -16,6 +16,8 @@
 
 package org.springframework.format.support;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.EmbeddedValueResolverAware;
@@ -27,6 +29,7 @@ import org.springframework.core.convert.converter.ConditionalGenericConverter;
 import org.springframework.core.convert.converter.GenericConverter;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.format.*;
+import org.springframework.format.datetime.joda.DateTimeParser;
 import org.springframework.util.StringUtils;
 import org.springframework.util.StringValueResolver;
 
@@ -38,7 +41,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * TODO GenericConversionService实现了Converter的注册功能和利用Convert来转化的功能。
+ * TODO GenericConversionService实现了Converter的注册功能和利用Converter来转化的功能。
  * A {@link org.springframework.core.convert.ConversionService} implementation
  * designed to be configured as a {@link FormatterRegistry}.
  *
@@ -99,7 +102,7 @@ public class FormattingConversionService extends GenericConversionService
 		if (this.embeddedValueResolver != null && annotationFormatterFactory instanceof EmbeddedValueResolverAware) {
 			((EmbeddedValueResolverAware) annotationFormatterFactory).setEmbeddedValueResolver(this.embeddedValueResolver);
 		}
-		// 获取支持的fieldType
+		// 获取支持的fieldType，可以使用该注解的属性类型
 		Set<Class<?>> fieldTypes = annotationFormatterFactory.getFieldTypes();
 		// TODO Date / LocalDate / Long
 		for (Class<?> fieldType : fieldTypes) {
@@ -162,9 +165,11 @@ public class FormattingConversionService extends GenericConversionService
 			if (source == null) {
 				return "";
 			}
+			// TODO 先转化，再格式化，与Parser相反
 			if (!sourceType.isAssignableTo(this.printerObjectType)) {
 				source = this.conversionService.convert(source, sourceType, this.printerObjectType);
 			}
+			// 得到String
 			return this.printer.print(source, LocaleContextHolder.getLocale());
 		}
 
@@ -178,6 +183,13 @@ public class FormattingConversionService extends GenericConversionService
 		}
 	}
 
+	public static void main(String[] args) {
+		// TODO 得到DateTime这个泛型参数
+		DateTimeFormatter dateTimeFormatter = null;
+		Parser<DateTime> dateTimeParser = new DateTimeParser(dateTimeFormatter);
+		Class a = GenericTypeResolver.resolveTypeArgument(dateTimeParser.getClass(), Parser.class);
+		System.out.println(a);
+	}
 
 	private static class ParserConverter implements GenericConverter {
 
@@ -207,6 +219,7 @@ public class FormattingConversionService extends GenericConversionService
 		 */
 		@Override
 		public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+			// TODO 强转为text，text格式化为某个对象
 			String text = (String) source;
 			if (!StringUtils.hasText(text)) {
 				return null;
@@ -223,8 +236,10 @@ public class FormattingConversionService extends GenericConversionService
 				throw new IllegalStateException("Parsers are not allowed to return null");
 			}
 			TypeDescriptor resultType = TypeDescriptor.valueOf(result.getClass());
+			// DateTime -> Date
 			if (!resultType.isAssignableTo(targetType)) {
 				Object oldResult = result;
+				// TODO 不能赋值，再转化一下，利用其他Converter
 				result = this.conversionService.convert(result, resultType, targetType);
 				LOGGER.info("转换值：{}，结果为：{}", oldResult, result);
 			}

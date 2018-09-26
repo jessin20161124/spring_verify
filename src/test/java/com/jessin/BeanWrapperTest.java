@@ -23,7 +23,7 @@ public class BeanWrapperTest {
         Map<String, String> userMap = Maps.newHashMap();
         userMap.put("id", "2013");
         userMap.put("age", "24");
-        userMap.put("name", "信息");
+        userMap.put("map[abc]", "信息");
         beanWrapper.setPropertyValues(userMap);
         log.info("结果为：{}", user);
     }
