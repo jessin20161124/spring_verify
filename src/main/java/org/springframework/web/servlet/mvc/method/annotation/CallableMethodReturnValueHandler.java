@@ -16,13 +16,13 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.util.concurrent.Callable;
-
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.async.WebAsyncUtils;
 import org.springframework.web.method.support.AsyncHandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import java.util.concurrent.Callable;
 
 /**
  * Handles return values of type {@link Callable}.
@@ -52,6 +52,7 @@ public class CallableMethodReturnValueHandler implements AsyncHandlerMethodRetur
 		}
 
 		Callable<?> callable = (Callable<?>) returnValue;
+		// TODO 每个请求都会创建一个WebAsyncManager，存储在HttpServletRequest的一个scope为request的属性中
 		WebAsyncUtils.getAsyncManager(webRequest).startCallableProcessing(callable, mavContainer);
 	}
 

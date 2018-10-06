@@ -19,9 +19,14 @@ import java.beans.PropertyEditorSupport;
 public class MyControllerAdvice {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @InitBinder
-    public void init(WebDataBinder webDataBinder) {
+    public void globalInit(WebDataBinder webDataBinder) {
         logger.info("创建DataBinder时调用MyControllerAdvice的InitBinder初始化方法来初始化DataBinder");
         webDataBinder.registerCustomEditor(User.class, new PropertyEditorSupport() {
+            /**
+             * convertIfNecessary时，转化为对应的实例！传递个class就可以实例化了
+             * @param text
+             * @throws IllegalArgumentException
+             */
             @Override
             public void setAsText(String text) throws IllegalArgumentException {
                 String[] items = text.split(":");

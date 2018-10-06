@@ -16,13 +16,13 @@
 
 package org.springframework.web.context.request.async;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
+
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Utility methods related to processing asynchronous web requests.
@@ -76,6 +76,7 @@ public abstract class WebAsyncUtils {
 	 * @return an AsyncWebRequest instance (never {@code null})
 	 */
 	public static AsyncWebRequest createAsyncWebRequest(HttpServletRequest request, HttpServletResponse response) {
+		// TODO 必须是Servlet 3.0才支持异步
 		return (startAsyncAvailable ? AsyncWebRequestFactory.createStandardAsyncWebRequest(request, response) :
 				new NoSupportAsyncWebRequest(request, response));
 	}

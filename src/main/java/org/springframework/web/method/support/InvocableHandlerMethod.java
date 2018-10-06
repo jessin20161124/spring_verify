@@ -134,9 +134,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			logger.info(sb.toString());
 		}
 		Object returnValue = doInvoke(args);
-		if (logger.isInfoEnabled()) {
-			logger.info("方法 [" + getMethod().getName() + "] 返回 [" + returnValue + "]");
-		}
+		logger.info("方法 [" + getMethod().getName() + "] 返回 [" + returnValue + "]，返回类型为：" + (returnValue != null ? returnValue.getClass().getSimpleName() : null));
 		return returnValue;
 	}
 

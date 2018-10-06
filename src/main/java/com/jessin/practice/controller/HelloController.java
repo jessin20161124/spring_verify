@@ -17,7 +17,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.annotation.AsyncTaskMethodReturnValueHandler;
+import org.springframework.web.servlet.mvc.method.annotation.CallableMethodReturnValueHandler;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import javax.annotation.PostConstruct;
@@ -72,7 +75,7 @@ public class HelloController {
 
     // 日期入参格式化
     @InitBinder
-    public void init(WebDataBinder dataBinder) {
+    public void localInit(WebDataBinder dataBinder) {
 //        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 //        CustomDateEditor dateEditor = new CustomDateEditor(dateFormat, true);
 //        dataBinder.registerCustomEditor(Date.class, dateEditor);
@@ -96,15 +99,46 @@ public class HelloController {
         return user;
     }
 
-    @RequestMapping("/asyncSayUser")
+    /**
+     * TODO 拦截器和过滤器均需添加异步支持： <async-supported>true</async-supported>，且servlet为3.0及以上
+     * 提前释放当前线程，交由其他线程处理复杂的任务，其他线程处理得到结果后，出发另一个线程将结果返回给浏览器，
+     * 这一过程中response一直打开。
+     * 在返回值处理器中处理
+     * @see CallableMethodReturnValueHandler
+     * @param user
+     * @return
+     */
+    @RequestMapping("/callableSayUser")
     @ResponseBody
-    public Callable<User> asyncSayUser(@RequestParam User user) {
+    public Callable<User> callableSayUser(@RequestParam User user) {
         return new Callable<User>() {
             @Override
             public User call() throws Exception {
+                Thread.sleep(3000);
                 return user;
             }
         };
+    }
+
+    /**
+     * http://localhost:8081/practice/asyncTaskSayUser?user=1:ming:2
+     * 提前释放当前线程，交由其他线程处理复杂的任务，其他线程处理得到结果后，出发另一个线程将结果返回给浏览器，
+     * 这一过程中response一直打开。
+     * @see AsyncTaskMethodReturnValueHandler 这个可以设置本地超时时间
+     * @param user
+     * @return
+     */
+    @RequestMapping("/asyncTaskSayUser")
+    @ResponseBody
+    public WebAsyncTask<User> asyncTaskSayUser(@RequestParam User user) {
+        // 和配置中同时设置时，以这个为准。
+        return new WebAsyncTask<User>(20000, new Callable<User>() {
+            @Override
+            public User call() throws Exception {
+                Thread.sleep(4000);
+                return user;
+            }
+        });
     }
 
     /**

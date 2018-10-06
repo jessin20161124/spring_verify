@@ -67,6 +67,8 @@
         <!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
         <!--</bean>-->
         <!--</mvc:message-converters>-->
+        <!-- default-timeout默认为空串，必须设置，指定线程池运行超时时间，单位毫秒-->
+        <mvc:async-support task-executor="executor" default-timeout="3000"/>
     </mvc:annotation-driven>
 
     <bean id="formattingConversionService"

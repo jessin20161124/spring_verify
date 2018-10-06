@@ -985,6 +985,7 @@ public class DispatcherServlet extends FrameworkServlet {
                 mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
+					logger.info("异步请求已经开始，主线程不用返回");
 					return;
 				}
                 logger.info("[Spring MVC] 5. " + ha + "处理request：" + request.getRequestURI() + "，得到mv：" + mv);

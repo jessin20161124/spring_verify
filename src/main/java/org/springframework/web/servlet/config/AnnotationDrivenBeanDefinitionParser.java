@@ -453,7 +453,9 @@ class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParser {
 
 	private String getAsyncTimeout(Element element) {
 		Element asyncElement = DomUtils.getChildElementByTagName(element, "async-support");
-		return (asyncElement != null) ? asyncElement.getAttribute("default-timeout") : null;
+		String asyncTimeout = (asyncElement != null) ? asyncElement.getAttribute("default-timeout") : null;
+		logger.info("获取到asyncTimeout为：" + asyncTimeout);
+		return asyncTimeout;
 	}
 
 	private RuntimeBeanReference getAsyncExecutor(Element element) {
