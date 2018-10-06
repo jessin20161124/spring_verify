@@ -435,6 +435,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 			}
 			Object oldValue = null;
 			try {
+				// TODO pv中的值在转换时会被重新设置，isConverted可能设置为true
 				Object originalValue = pv.getValue();
 				Object valueToApply = originalValue;
                 logger.info("token.keys为null，设置pv：" + pv + "，actualName : " + actualName
@@ -459,6 +460,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 								}
 							}
 						}
+						// 可能再次转化
                         valueToApply = convertForProperty(
 								propertyName, oldValue, originalValue, ph.toTypeDescriptor());
                         logger.info("将属性" + propertyName + "的值：" + originalValue

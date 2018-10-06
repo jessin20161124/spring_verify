@@ -7,6 +7,8 @@
   <filter>
     <filter-name>CharacterEncodingFilter</filter-name>
     <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <async-supported>true</async-supported>
+
     <init-param>
       <param-name>encoding</param-name>
       <param-value>utf-8</param-value>
@@ -31,8 +33,9 @@
   </listener>
   <!-- web层-->
   <servlet>
-    <servlet-name>spring</servlet-name>
+    <servlet-name>spring_verify</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+
     <init-param>
       <param-name>contextConfigLocation</param-name>
       <param-value>
@@ -44,9 +47,10 @@
       <param-value>true</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
+    <async-supported>true</async-supported>
   </servlet>
   <servlet-mapping>
-    <servlet-name>spring</servlet-name>
+    <servlet-name>spring_verify</servlet-name>
      <!--不能使用/*，但可以使用/crud/*，使用*.do会把后缀名去掉-->
     <url-pattern>/practice/*</url-pattern>
   </servlet-mapping>

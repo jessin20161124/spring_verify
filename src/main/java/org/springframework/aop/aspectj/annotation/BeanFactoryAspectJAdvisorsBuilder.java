@@ -16,18 +16,13 @@
 
 package org.springframework.aop.aspectj.annotation;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.aspectj.lang.reflect.PerClauseKind;
-
 import org.springframework.aop.Advisor;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.util.Assert;
+
+import java.util.*;
 
 /**
  * Helper for retrieving @AspectJ beans from a BeanFactory and building
@@ -68,6 +63,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 		Assert.notNull(beanFactory, "ListableBeanFactory must not be null");
 		Assert.notNull(advisorFactory, "AspectJAdvisorFactory must not be null");
 		this.beanFactory = beanFactory;
+		// TODO ReflectiveAspectJAdvisorFactory
 		this.advisorFactory = advisorFactory;
 	}
 
@@ -75,7 +71,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 	/**
 	 * Look for AspectJ-annotated aspect beans in the current bean factory,
 	 * and return to a list of Spring AOP Advisors representing them.
-	 * <p>Creates a Spring Advisor for each AspectJ advice method.
+	 * <p>TODO Creates a Spring Advisor for each AspectJ advice method.
 	 * @return the list of {@link org.springframework.aop.Advisor} beans
 	 * @see #isEligibleBean
 	 */
@@ -87,6 +83,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 			if (aspectNames == null) {
 				List<Advisor> advisors = new LinkedList<Advisor>();
 				aspectNames = new LinkedList<String>();
+				// TODO 遍历当前BeanFactory以及父BeanFactory，获取到所有的beanName，并找到标有@Aspect的bean，将其标有注解@Before等的对应方法封装为Advisor
 				String[] beanNames =
 						BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this.beanFactory, Object.class, true, false);
 				for (String beanName : beanNames) {
@@ -100,13 +97,16 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 					if (beanType == null) {
 						continue;
 					}
+					// TODO 首先是标有注解@Aspect的类
 					if (this.advisorFactory.isAspect(beanType)) {
 						aspectNames.add(beanName);
 						AspectMetadata amd = new AspectMetadata(beanType, beanName);
 						if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 							MetadataAwareAspectInstanceFactory factory =
 									new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+							// TODO ReflectiveAspectJAdvisorFactory
 							List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
+							// 单例
 							if (this.beanFactory.isSingleton(beanName)) {
 								this.advisorsCache.put(beanName, classAdvisors);
 							}
@@ -121,6 +121,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 								throw new IllegalArgumentException("Bean with name '" + beanName +
 										"' is a singleton, but aspect instantiation model is not singleton");
 							}
+							// 非单例
 							MetadataAwareAspectInstanceFactory factory =
 									new PrototypeAspectInstanceFactory(this.beanFactory, beanName);
 							this.aspectFactoryCache.put(beanName, factory);
@@ -129,6 +130,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 					}
 				}
 				this.aspectBeanNames = aspectNames;
+				// TODO 获取到，直接返回
 				return advisors;
 			}
 		}
@@ -140,9 +142,11 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 		for (String aspectName : aspectNames) {
 			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);
 			if (cachedAdvisors != null) {
+				// 单例
 				advisors.addAll(cachedAdvisors);
 			}
 			else {
+				// 非单例
 				MetadataAwareAspectInstanceFactory factory = this.aspectFactoryCache.get(aspectName);
 				advisors.addAll(this.advisorFactory.getAdvisors(factory));
 			}

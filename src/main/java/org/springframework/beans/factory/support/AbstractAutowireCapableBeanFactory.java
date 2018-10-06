@@ -1476,6 +1476,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 }
                 // Possibly store converted value in merged bean definition,
                 // in order to avoid re-conversion for every created bean instance.
+                // TODO 如果不含有${}，且非嵌入式注入，含有.或者[]，则转换值成功，接下来就不用转换了
                 if (resolvedValue == originalValue) {
                     if (convertible) {
                         pv.setConvertedValue(convertedValue);

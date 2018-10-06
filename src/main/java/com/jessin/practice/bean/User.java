@@ -20,13 +20,13 @@ import java.util.Map;
  */
 // 必须注册为bean，settings属性文件和afterPropertiesSet才会起作用
 @Component
-public class User implements InitializingBean{
+public class User implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
     private int id;
     private List<String> car;
     // TODO 默认支持yyyy/MM/dd的形式，DateTimeFormat不起作用，不知为何。
     // jsonformat必须配置时区，输出json时时间才会正确
-     @DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date birthday;
     // 不通过setter属性来注入，直接注入
@@ -50,11 +50,11 @@ public class User implements InitializingBean{
     // 需要初始化，才能注入map[abc][def]
     private Map<String, String> map = Maps.newHashMap();
 
-    public User(){
+    public User() {
         LOGGER.info("user构造函数初始化，name：{}", name);
     }
 
-    public void setMoney(String money){
+    public void setMoney(String money) {
         System.out.println("money=" + money);
     }
 
@@ -109,15 +109,14 @@ public class User implements InitializingBean{
     }
 
 
-
     @Override
-    public String toString(){
+    public String toString() {
         String ret = JSONObject.toJSONString(this);
         return ret;
     }
 
     @PostConstruct
-    private void init(){
+    private void init() {
         LOGGER.info("postConstruct init user, name：{}", name);
     }
 

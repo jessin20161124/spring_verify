@@ -16,13 +16,13 @@
 
 package org.springframework.web.servlet.mvc.method.annotation;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import javax.servlet.ServletRequest;
-
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.HandlerMapping;
+
+import javax.servlet.ServletRequest;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Subclass of {@link ServletRequestDataBinder} that adds URI template variables
@@ -55,6 +55,7 @@ public class ExtendedServletRequestDataBinder extends ServletRequestDataBinder {
 	}
 
 	/**
+	 * 路径中的变量，也加进来，设置到属性中
 	 * Merge URI variables into the property values to use for data binding.
 	 */
 	@Override

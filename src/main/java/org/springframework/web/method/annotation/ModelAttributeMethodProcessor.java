@@ -37,8 +37,7 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 
 /**
- * TODO 专门为标有@ModelAttribute注解的属性注入参数　复杂参数没有该注解也可以注入
- * TODO 同时实现了参数解析和返回值解析
+ * TODO 专门为标有@ModelAttribute注解的属性注入参数　复杂参数没有该注解也可以注入，同时实现了参数解析和返回值解析
  * Resolves method arguments annotated with {@code @ModelAttribute} and handles
  * return values from methods annotated with {@code @ModelAttribute}.
  *
@@ -130,10 +129,12 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 		mavContainer.removeAttributes(bindingResultModel);
 		mavContainer.addAllAttributes(bindingResultModel);
 
+		// 这里貌似没必要啊？已经按照该类型实例化了，还用转化类型吗？
 		return binder.convertIfNecessary(binder.getTarget(), parameter.getParameterType(), parameter);
 	}
 
 	/**
+	 * TODO 实例化model
 	 * Extension point to create the model attribute if not found in the model.
 	 * The default implementation uses the default constructor.
 	 * @param attributeName the name of the attribute (never {@code null})

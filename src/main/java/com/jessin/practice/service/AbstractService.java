@@ -13,6 +13,7 @@ import javax.annotation.Resource;
  **/
 public abstract class AbstractService implements InitializingBean {
     private Logger logger = LoggerFactory.getLogger(AbstractService.class);
+//    @Resource(name="userImpl")，默认user这个beanName不存在bean时，会按照类型进行注入
     @Resource
     private User user;
 

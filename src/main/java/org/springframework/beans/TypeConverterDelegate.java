@@ -411,6 +411,7 @@ class TypeConverterDelegate {
 			// we just want to allow special PropertyEditors to override setValue
 			// for type conversion from non-String values to the required type.
 			try {
+				// TODO 待转换的值不是字符串，使用setValue，再用getValue获得转换后的值
 				editor.setValue(convertedValue);
 				Object newConvertedValue = editor.getValue();
 				if (newConvertedValue != convertedValue) {
@@ -446,6 +447,7 @@ class TypeConverterDelegate {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Converting String to [" + requiredType + "] using property editor [" + editor + "]");
 				}
+				// TODO 如果待转换的是字符串，则调用setAsText
 				String newTextValue = (String) convertedValue;
 				return doConvertTextValue(oldValue, newTextValue, editor);
 			}

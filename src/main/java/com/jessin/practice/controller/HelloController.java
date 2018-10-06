@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * Created by jessin on 17-7-22.
@@ -95,6 +96,17 @@ public class HelloController {
         return user;
     }
 
+    @RequestMapping("/asyncSayUser")
+    @ResponseBody
+    public Callable<User> asyncSayUser(@RequestParam User user) {
+        return new Callable<User>() {
+            @Override
+            public User call() throws Exception {
+                return user;
+            }
+        };
+    }
+
     /**
      * 外部是接口List，不可实例化，ModelAttributeMethodProcessor#createAttribute处理时会出错
      * @param user
@@ -105,6 +117,17 @@ public class HelloController {
 //    public List<User> sayUserList(List<User> user) {
 //        return user;
 //    }
+
+    /**
+     * curl -X POST -H "content-type: application/json;charset=utf-8" -d '[{"id":1,"birthday":"2018-09-29 20:07:00"},{"id":2,"birthday":"2018-09-29 20:07:00"}]}' http://localhost:8081/practice/sayUserList
+     * @param user
+     * @return
+     */
+    @RequestMapping("/sayUserList")
+    @ResponseBody
+    public List<User> sayUserList(@RequestBody List<User> user) {
+        return user;
+    }
 
     /**
      * 外部是接口List，不可实例化，ModelAttributeMethodProcessor#createAttribute处理时会出错
