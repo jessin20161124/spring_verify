@@ -36,31 +36,7 @@
 4. @ResponseBody用HttpMessageConverter进行转换，@RequestBody也是？可以多个吗？用的是哪个参数解析器，返回值转换器？
 - RequestResponseBodyMethodProcessor。HttpMessageConverter主要在这个类使用。起作用的是MappingJackson2HttpMessageConverter。默认处理application/json等类型。支持的media type在构造函数中传递。
 - 先格式化，再转化。参数解析器可以分为按照类解析和按照注解(@RequestParam/@ModelAttribute)解析。@RequestParam进行普通类型绑定，只调用Binder.convertIfNecessary()
-- @ModelAttribute进行复杂类型绑定，会自动实例化复杂model（List是接口，无法实例化，会抛异常），可以实例化List属性，且实例类型为ArrayList，会调用Binder.bind()
-5. 测试工单代码下META-INF/spring.handlers中的NamespaceUri
-```JSON
-{
-    "http://code.alibabatech.com/schema/dubbo":"com.alibaba.dubbo.config.spring.schema.DubboNamespaceHandler",
-    "http://www.springframework.org/schema/aop":"org.springframework.aop.config.AopNamespaceHandler",
-    "http://www.springframework.org/schema/oxm":"org.springframework.oxm.config.OxmNamespaceHandler",
-    "http://www.springframework.org/schema/task":"org.springframework.scheduling.config.TaskNamespaceHandler",
-    "http://mybatis.org/schema/mybatis-spring":"org.mybatis.spring.config.NamespaceHandler",
-    "http://www.springframework.org/schema/lang":"org.springframework.scripting.config.LangNamespaceHandler",
-    "http://www.springframework.org/schema/c":"org.springframework.beans.factory.xml.SimpleConstructorNamespaceHandler",
-    "http://www.qunar.com/schema/qconfig":"qunar.tc.qconfig.client.spring.QConfigNamespaceHandler",
-    "http://www.springframework.org/schema/jee":"org.springframework.ejb.config.JeeNamespaceHandler",
-    "http://www.springframework.org/schema/jms":"org.springframework.jms.config.JmsNamespaceHandler",
-    "http://www.springframework.org/schema/cache":"org.springframework.cache.config.CacheNamespaceHandler",
-    "http://www.qunar.com/schema/qmq":"qunar.tc.qmq.consumer.annotation.QmqClientNamespaceHandler",
-    "http://www.springframework.org/schema/jdbc":"org.springframework.jdbc.config.JdbcNamespaceHandler",
-    "http://www.springframework.org/schema/p":"org.springframework.beans.factory.xml.SimplePropertyNamespaceHandler",
-    "http://www.springframework.org/schema/util":"org.springframework.beans.factory.xml.UtilNamespaceHandler",
-    "http://www.qunar.com/schema/qschedule":"qunar.tc.qschedule.config.spring.QScheduleNamespaceHandler",
-    "http://www.springframework.org/schema/tx":"org.springframework.transaction.config.TxNamespaceHandler",
-    "http://www.springframework.org/schema/context":"org.springframework.context.config.ContextNamespaceHandler",
-    "http://www.springframework.org/schema/mvc":"org.springframework.web.servlet.config.MvcNamespaceHandler"
-}
-```
+- @ModelAttribute进行复杂类型绑定，会自动实例化复杂model（List是接口，无法实例化，会抛异常），可以实例化List属性，且实例类型为ArrayList，会调用Binder.bind(
 6. ViewResolver将对应的逻辑视图名转化为真正的view
 7. 组件之间的关系、职能。
 - HandlerMapping
