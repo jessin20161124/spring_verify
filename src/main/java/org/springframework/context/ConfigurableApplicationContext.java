@@ -16,13 +16,13 @@
 
 package org.springframework.context;
 
-import java.io.Closeable;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+
+import java.io.Closeable;
 
 /**
  * SPI interface to be implemented by most if not all application contexts.
@@ -42,7 +42,7 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 
 	/**
 	 * Any number of these characters are considered delimiters between
-	 * multiple context config paths in a single String value.
+	 * multiple context config paths in a single String value.n
 	 * @see org.springframework.context.support.AbstractXmlApplicationContext#setConfigLocation
 	 * @see org.springframework.web.context.ContextLoader#CONFIG_LOCATION_PARAM
 	 * @see org.springframework.web.servlet.FrameworkServlet#setContextConfigLocation

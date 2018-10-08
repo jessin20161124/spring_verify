@@ -516,7 +516,6 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             populateBean(beanName, mbd, instanceWrapper);
             logger.info(beanName + "......................17. 属性注入结束......................" + instanceWrapper.getWrappedInstance());
             if (exposedObject != null) {
-                //logger.info("开始调用Init方法 = " + beanName);
                 exposedObject = initializeBean(beanName, exposedObject, mbd);
             }
         } catch (Throwable ex) {
@@ -1079,6 +1078,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);
             }
             BeanWrapper bw = new BeanWrapperImpl(beanInstance);
+            // 注入cs/customEditor
             initBeanWrapper(bw);
             return bw;
         } catch (Throwable ex) {

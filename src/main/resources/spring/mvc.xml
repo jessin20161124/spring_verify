@@ -75,6 +75,7 @@
           class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
         <property name="converters">
             <set>
+                <!-- 优先使用customEditor -->
                 <!--<bean class="com.jessin.practice.bean.String2DateConverter"></bean>-->
                 <bean class="com.jessin.practice.bean.String2UserConverter"></bean>
             </set>

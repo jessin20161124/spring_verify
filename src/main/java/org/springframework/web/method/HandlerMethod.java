@@ -16,12 +16,8 @@
 
 package org.springframework.web.method;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.MethodParameter;
@@ -29,6 +25,9 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.annotation.SynthesizingMethodParameter;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * Encapsulates information about a handler method consisting of a
@@ -241,6 +240,7 @@ public class HandlerMethod {
 	public HandlerMethod createWithResolvedBean() {
 		Object handler = this.bean;
 		if (this.bean instanceof String) {
+			logger.info("controller bean是字符串，从beanFactory中获取：" + bean);
 			String beanName = (String) this.bean;
 			handler = this.beanFactory.getBean(beanName);
 		}

@@ -22,7 +22,7 @@ public class String2UserConverter implements Converter<String, User> {
     public User convert(String source) {
         String[] items = source.split(":");
         if (items.length != 3) {
-            throw new IllegalArgumentException("参数非法：" + source + "，格式必须为id:name:age");
+            throw new IllegalArgumentException("参数非法：" + source + "，格式必须为id:name:age哦");
         }
         User user = new User();
         user.setId(Integer.parseInt(items[0]));

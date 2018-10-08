@@ -277,7 +277,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 	}
 
     /**
-     * TODO 几个关键的类
+     * TODO 几个关键的方法
      * @param requiredType the type of the property (can be {@code null} if a property
      * is given but should be specified in any case for consistency checking)
      * @param propertyPath the path of the property (name or nested path), or

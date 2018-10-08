@@ -16,6 +16,7 @@
 
 package org.springframework.context.support;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -630,6 +631,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		if (!beanFactory.containsLocalBean(SYSTEM_ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(SYSTEM_ENVIRONMENT_BEAN_NAME, getEnvironment().getSystemEnvironment());
 		}
+	}
+
+	public static void main(String[] args) {
+		System.out.println(JSON.toJSONString(System.getenv()));
+
+		System.out.println(JSON.toJSONString(System.getProperties()));
 	}
 
 	/**

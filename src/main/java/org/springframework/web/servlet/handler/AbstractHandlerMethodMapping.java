@@ -293,7 +293,6 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 	@Override
 	protected HandlerMethod getHandlerInternal(HttpServletRequest request) throws Exception {
 		String lookupPath = getUrlPathHelper().getLookupPathForRequest(request);
-		logger.info("查询访问路径的处理器方法 " + lookupPath);
 		this.mappingRegistry.acquireReadLock();
 		try {
 			HandlerMethod handlerMethod = lookupHandlerMethod(lookupPath, request);
@@ -305,6 +304,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 					logger.debug("Did not find handler method for [" + lookupPath + "]");
 				}
 			}
+			logger.info("查询访问路径的处理器方法 " + lookupPath + "，结果为：" + handlerMethod);
 			return (handlerMethod != null ? handlerMethod.createWithResolvedBean() : null);
 		}
 		finally {
@@ -335,10 +335,10 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		if (!matches.isEmpty()) {
 			Comparator<Match> comparator = new MatchComparator(getMappingComparator(request));
 			Collections.sort(matches, comparator);
-			if (logger.isTraceEnabled()) {
-				logger.trace("Found " + matches.size() + " matching mapping(s) for [" +
+
+			logger.info("查找到 " + matches.size() + "个匹配的映射： [" +
 						lookupPath + "] : " + matches);
-			}
+
 			Match bestMatch = matches.get(0);
 			if (matches.size() > 1) {
 				if (CorsUtils.isPreFlightRequest(request)) {
@@ -526,9 +526,8 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				HandlerMethod handlerMethod = createHandlerMethod(handler, method);
 				assertUniqueMethodMapping(handlerMethod, mapping);
 
-				if (logger.isInfoEnabled()) {
-					logger.info("Mapped \"" + mapping + "\" onto " + handlerMethod);
-				}
+				logger.info("Mapped \"" + mapping + "\" onto [" + handlerMethod.getBean() + ":" + handlerMethod.getMethod().getName() + "]");
+
 				// todo 核心
 				this.mappingLookup.put(mapping, handlerMethod);
 

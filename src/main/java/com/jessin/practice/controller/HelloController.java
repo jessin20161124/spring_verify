@@ -132,13 +132,23 @@ public class HelloController {
     @ResponseBody
     public WebAsyncTask<User> asyncTaskSayUser(@RequestParam User user) {
         // 和配置中同时设置时，以这个为准。
-        return new WebAsyncTask<User>(20000, new Callable<User>() {
+        WebAsyncTask webAsyncTask = new WebAsyncTask<User>(200, new Callable<User>() {
             @Override
             public User call() throws Exception {
                 Thread.sleep(4000);
                 return user;
             }
         });
+        webAsyncTask.onTimeout(new Callable() {
+            @Override
+            public Object call() throws Exception {
+                Map<String, Object> map = Maps.newHashMap();
+                map.put("error", "超时了");
+                map.put("ret", false);
+                return map;
+            }
+        });
+        return webAsyncTask;
     }
 
     /**
