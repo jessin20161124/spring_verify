@@ -6,6 +6,8 @@ import com.jessin.practice.bean.User;
 import com.jessin.practice.event.HelloEvent;
 import com.jessin.practice.service.AbstractService;
 import com.jessin.practice.service.ChildService;
+import com.jessin.practice.service.factoryBean.ConnServer;
+import com.jessin.practice.service.test.BeanA;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +23,6 @@ import org.springframework.web.context.request.async.WebAsyncTask;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.annotation.AsyncTaskMethodReturnValueHandler;
 import org.springframework.web.servlet.mvc.method.annotation.CallableMethodReturnValueHandler;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -38,12 +39,16 @@ import java.util.concurrent.Callable;
  * Created by jessin on 17-7-22.
  */
 @Controller
+//@Scope("prototype")
 public class HelloController {
 
     @Resource
     private List<AbstractService> abstractServiceList;
     @Resource
     private Map<String, AbstractService> abstractServiceMap;
+
+    @Resource
+    private ConnServer connServer;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HelloController.class);
 
@@ -80,6 +85,12 @@ public class HelloController {
 //        CustomDateEditor dateEditor = new CustomDateEditor(dateFormat, true);
 //        dataBinder.registerCustomEditor(Date.class, dateEditor);
         //dataBinder.registerCustomEditor(List.class, new UserEditor());
+    }
+
+    @RequestMapping("/connServer")
+    @ResponseBody
+    public User connServer() {
+        return connServer.connWorld();
     }
 
     /**
@@ -196,7 +207,7 @@ public class HelloController {
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     // 可以通过注入数组，调用set方法设置属性。
-    // curl 'http://localhost:8081/practice/hello?name=tom&car=1342&car=13412' --data-urlencode 'car=我爱你'
+    // curl 'http://localhost:8081/practice/hello?car=1342&car=13412' --data-urlencode 'car=我爱你'
     public Map<String, Object> sayHello(User user, String abc) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -211,12 +222,18 @@ public class HelloController {
         map.put("user", user);
         map.put("abc", abc);
         LOGGER.info(".................发布事件，map为:{}..........................", map);
-        LOGGER.info("获取到带有所有的Controller bean：{}", applicationContext.getBeansWithAnnotation(Controller.class));
-        LOGGER.info("获取RequestMappingHandlerAdapter所有实例的beanName : {}", applicationContext.getBeanNamesForType(RequestMappingHandlerAdapter.class));
-
         applicationContext.publishEvent(new HelloEvent("say hello"));
         applicationContext.publishEvent("just string");
+        getBeanA().print();
         return map;
+    }
+
+    /**
+     * TODO BeanA使用@Scope("prototype")注解，则applicationContext获取该bean时每次都会生成bean，不会缓存起来。必须调用getBean才能重新生成，依赖注入只进行一次。
+     * @return
+     */
+    private BeanA getBeanA() {
+        return applicationContext.getBean("beanA", BeanA.class);
     }
 
     @RequestMapping(value = "/hello", params = "name=tom")
@@ -241,7 +258,6 @@ public class HelloController {
         map.put("user", user);
         map.put("abc", null);
         LOGGER.info(".................发布事件..........................");
-        LOGGER.info("获取到带有所有的Controller bean：{}", applicationContext.getBeansWithAnnotation(Controller.class));
         applicationContext.publishEvent(new HelloEvent("say hello"));
         applicationContext.publishEvent("just string");
         return map;

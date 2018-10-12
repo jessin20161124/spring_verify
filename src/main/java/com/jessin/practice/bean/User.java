@@ -24,7 +24,6 @@ public class User implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
     private int id;
     private List<String> car;
-    // TODO 默认支持yyyy/MM/dd的形式，DateTimeFormat不起作用，不知为何。
     // jsonformat必须配置时区，输出json时时间才会正确
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

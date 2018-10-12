@@ -416,9 +416,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      */
     @Override
     protected Object createBean(String beanName, RootBeanDefinition mbd, Object[] args) throws BeanCreationException {
-        if (logger.isInfoEnabled()) {
-            logger.info("6. 创建bean实例 '" + beanName + "'");
-        }
+        logger.info("6. 创建bean实例 '" + beanName + "'");
+
         RootBeanDefinition mbdToUse = mbd;
 
         // Make sure bean class is actually resolved at this point, and
@@ -1308,6 +1307,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     protected String[] unsatisfiedNonSimpleProperties(AbstractBeanDefinition mbd, BeanWrapper bw) {
         Set<String> result = new TreeSet<String>();
         PropertyValues pvs = mbd.getPropertyValues();
+        // TODO 自动装配必须存在getter方法，且非简单类型，property条目没有配置到xml中。
         PropertyDescriptor[] pds = bw.getPropertyDescriptors();
         for (PropertyDescriptor pd : pds) {
             if (pd.getWriteMethod() != null && !isExcludedFromDependencyCheck(pd) && !pvs.contains(pd.getName()) &&
@@ -1476,7 +1476,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 }
                 // Possibly store converted value in merged bean definition,
                 // in order to avoid re-conversion for every created bean instance.
-                // TODO 如果不含有${}，且非嵌入式注入，含有.或者[]，则转换值成功，接下来就不用转换了
+                // TODO 如果非嵌入式注入，含有.或者[]，则转换值成功，接下来就不用转换了
                 if (resolvedValue == originalValue) {
                     if (convertible) {
                         pv.setConvertedValue(convertedValue);

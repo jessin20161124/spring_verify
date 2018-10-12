@@ -890,7 +890,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
     }
 
     /**
-     * TODO 先放全局@Controller中@InitBinder方法，再添加当前Handler类中的@InitBinder方法
+     * TODO 先放全局@ControllerAdvice中@InitBinder方法，再添加当前Handler类中的@InitBinder方法
      *
      * @param handlerMethod
      * @return

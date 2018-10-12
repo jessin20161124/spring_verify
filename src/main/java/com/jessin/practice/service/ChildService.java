@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * @author zexin.guo
  * @create 2017-11-12 下午4:10
  **/
-@Service("1")
+@Service
 public class ChildService extends AbstractService {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Override

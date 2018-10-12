@@ -269,7 +269,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					afterSingletonCreation(beanName);
 				}
 				if (newSingleton) {
-					// 新建时加入缓存中
+					// 新建时加入缓存中，TODO 如果是FactoryBean，则存的也是FactoryBean。
 					addSingleton(beanName, singletonObject);
 				}
 				logger.info("25. 单例bean '" + beanName + "'的构建周期结束");

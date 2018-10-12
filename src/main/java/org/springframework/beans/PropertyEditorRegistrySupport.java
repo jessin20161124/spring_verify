@@ -108,6 +108,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 	}
 
 	/**
+	 * TODO 注入StringArrayPropertyEditor，保证逗号分割的字符串能够分割为数组，converter中对应StringToArrayConverter
 	 * Activate config value editors which are only intended for configuration purposes,
 	 * such as {@link org.springframework.beans.propertyeditors.StringArrayPropertyEditor}.
 	 * <p>Those editors are not registered by default simply because they are in

@@ -1,6 +1,6 @@
 package com.jessin;
 
-import com.jessin.practice.bean.User;
+import com.jessin.practice.bean.Friend;
 import com.jessin.practice.service.HelloService;
 import com.jessin.practice.service.impl.HelloServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +20,12 @@ public class ApplicationContextTest {
 
     @Test
     public void test1 () {
-        User user = (User)applicationContext.getBean("user");
-        log.info("user : {}", user);
+        Friend friend = applicationContext.getBean("friend", Friend.class);
+        log.info("朋友为 : {}", friend);
+
+//        // 类型不匹配，出错
+//        Advisor friend = applicationContext.getBean("friend", Advisor.class);
+//        log.info("朋友为 : {}", friend);
     }
 
     @Test

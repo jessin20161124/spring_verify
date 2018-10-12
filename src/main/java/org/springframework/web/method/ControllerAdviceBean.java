@@ -16,6 +16,7 @@
 
 package org.springframework.web.method;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
@@ -43,6 +44,7 @@ import java.util.*;
  * @author Juergen Hoeller
  * @since 3.2
  */
+@Slf4j
 public class ControllerAdviceBean implements Ordered {
 
 	private final Object bean;
@@ -136,6 +138,7 @@ public class ControllerAdviceBean implements Ordered {
 	 * Return a bean instance if necessary resolving the bean name through the BeanFactory.
 	 */
 	public Object resolveBean() {
+		log.info("controller advice获取bean : {}", this.bean);
 		return (this.bean instanceof String ? this.beanFactory.getBean((String) this.bean) : this.bean);
 	}
 

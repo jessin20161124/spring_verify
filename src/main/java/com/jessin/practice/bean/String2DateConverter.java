@@ -23,7 +23,7 @@ public class String2DateConverter implements Converter<String, Date> {
             logger.info("使用String2DateConverter格式化日期：{}，结果为：{}", source, date);
             return date;
         } catch (ParseException e) {
-            e.printStackTrace();
+            logger.error("解析出错了：{}", source, e);
             return null;
         }
     }

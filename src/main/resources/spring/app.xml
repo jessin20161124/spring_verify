@@ -24,10 +24,24 @@ com.jessin.practice.bean,com.jessin.practice.listener">
     </context:component-scan>
     <!-- PropertyPlaceholderConfigurer是一个BeanFactoryPostProcessor，只在该容器中起作用，不可继承-->
     <context:property-placeholder location="classpath*:/test.properties" />
+
+    <!--<bean id="abc" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
+        <!--<property name="locations">-->
+            <!--<list>-->
+                <!--<value>classpath*:/test.properties</value>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
     <bean id="friend" class="com.jessin.practice.bean.Friend">
         <property name="id" value="1"></property>
-        <property name="name" value="小妹"/>
+        <property name="name" value="${USER}"/>
         <property name="user" ref="user"/>
+        <!--<property name="date">-->
+            <!--<list>-->
+                <!--<value>2018-01-02</value>-->
+                <!--<value>2019-02-03</value>-->
+            <!--</list>-->
+        <!--</property>-->
     </bean>
 
     <alias name="friend" alias="goodFriend"></alias>
@@ -44,4 +58,17 @@ com.jessin.practice.bean,com.jessin.practice.listener">
 
     <!-- 强制使用CGLIB动态代理 -->
     <aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <!-- beanName为conversionService，则父子容器均会注入该conversionService-->
+    <bean id="conversionService"
+          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <!-- 自定义，优先级高 -->
+        <property name="converters">
+            <set>
+                <!-- 优先使用customEditor，不过推荐使用converter -->
+                <!--<bean class="com.jessin.practice.bean.String2DateConverter"></bean>-->
+                <bean class="com.jessin.practice.bean.String2UserConverter"></bean>
+            </set>
+        </property>
+    </bean>
 </beans>

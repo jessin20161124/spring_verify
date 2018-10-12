@@ -320,10 +320,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				return getTypeConverter().convertIfNecessary(bean, requiredType);
 			}
 			catch (TypeMismatchException ex) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Failed to convert bean '" + name + "' to required type [" +
+				logger.info("Failed to convert bean '" + name + "' to required type [" +
 							ClassUtils.getQualifiedName(requiredType) + "]", ex);
-				}
 				throw new BeanNotOfRequiredTypeException(name, requiredType, bean.getClass());
 			}
 		}

@@ -334,6 +334,7 @@ public class DataBinder implements PropertyEditorRegistry, TypeConverter {
 	 * Return the underlying TypeConverter of this binder's BindingResult.
 	 */
 	protected PropertyEditorRegistry getPropertyEditorRegistry() {
+		// TODO target很重要，BeanPropertyBindingResult要求有target
 		if (getTarget() != null) {
 			return getInternalBindingResult().getPropertyAccessor();
 		}

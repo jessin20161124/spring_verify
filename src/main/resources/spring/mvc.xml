@@ -60,7 +60,8 @@
     <!-- TODO 这种情况有两个RequestMappingHandlerAdapter，
     使用的是第一种，使用的是内置的RequestMappingHandlerAdapter
      -->
-    <mvc:annotation-driven conversion-service="formattingConversionService">
+    <!-- TODO 这个conversionService会在参数绑定中使用 -->
+    <mvc:annotation-driven conversion-service="conversionService">
         <!-- 这里是添加，其实已经有了这个converter，但是位于列表的最后，这里再加一个相同的，但是放在前面 -->
         <!--　不注入默认值 -->
         <!--<mvc:message-converters register-defaults="false">-->
@@ -71,16 +72,6 @@
         <mvc:async-support task-executor="executor" default-timeout="3000"/>
     </mvc:annotation-driven>
 
-    <bean id="formattingConversionService"
-          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
-        <property name="converters">
-            <set>
-                <!-- 优先使用customEditor -->
-                <!--<bean class="com.jessin.practice.bean.String2DateConverter"></bean>-->
-                <bean class="com.jessin.practice.bean.String2UserConverter"></bean>
-            </set>
-        </property>
-    </bean>
     <!--完成JSON格式数据的自动转换-->
     <!-- 默认beanName为类全名#0 -->
     <!-- order = -1表示排到最前面，将会生效-->
