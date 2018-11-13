@@ -16,6 +16,8 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,7 @@ import org.springframework.web.servlet.mvc.method.annotation.CallableMethodRetur
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -198,7 +201,8 @@ public class HelloController {
 //    @RequestMapping(value = "/hello", params = "car=123")
 
     /**
-     * grep 'propertyName' --color=auto -C 50 log.dir_IS_UNDEFINED/gongdan.log
+     * TODO bindingResult跟随在@Valid后面，且必须有，对应的参数解析器为：org.springframework.web.method.annotation.ErrorsMethodArgumentResolver
+     * grep 'propertyName' --color=auto -C 50 log/spring_verify.log
      * @param user
      * @param abc
      * @return
@@ -208,7 +212,19 @@ public class HelloController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     // 可以通过注入数组，调用set方法设置属性。
     // curl 'http://localhost:8081/practice/hello?car=1342&car=13412' --data-urlencode 'car=我爱你'
-    public Map<String, Object> sayHello(User user, String abc) {
+    public Map<String, Object> sayHello(@Valid User user, BindingResult bindingResult, String abc) {
+        Map<String, Object> map = new HashMap();
+
+        if (bindingResult != null && bindingResult.hasFieldErrors()) {
+            String errorMsg = "";
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                errorMsg = errorMsg + fieldError.getDefaultMessage() + ",";
+            }
+            map.put("error", bindingResult.getAllErrors());
+            map.put("errorMsg", errorMsg);
+            return map;
+        }
+
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             //user.setName(null);
@@ -218,9 +234,9 @@ public class HelloController {
             LOGGER.error("error {}", abstractServiceList.get(0).getUserByName("小明"), e);
             throw new RuntimeException(e);
         }
-        Map<String, Object> map = new HashMap();
         map.put("user", user);
         map.put("abc", abc);
+        map.put("bindingResult", bindingResult);
         LOGGER.info(".................发布事件，map为:{}..........................", map);
         applicationContext.publishEvent(new HelloEvent("say hello"));
         applicationContext.publishEvent("just string");

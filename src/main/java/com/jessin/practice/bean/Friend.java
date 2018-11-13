@@ -1,11 +1,14 @@
 package com.jessin.practice.bean;
 
+import com.jessin.practice.annotation.HeritedAnnotation;
+
 import java.util.Date;
 import java.util.List;
 
 /**
  * Created by zexin.guo on 17-8-21.
  */
+@HeritedAnnotation("hello")
 public class Friend {
     private Integer id;
     private String name;

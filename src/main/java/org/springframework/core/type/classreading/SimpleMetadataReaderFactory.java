@@ -16,12 +16,12 @@
 
 package org.springframework.core.type.classreading;
 
-import java.io.IOException;
-
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.ClassUtils;
+
+import java.io.IOException;
 
 /**
  * Simple implementation of the {@link MetadataReaderFactory} interface,
@@ -70,6 +70,12 @@ public class SimpleMetadataReaderFactory implements MetadataReaderFactory {
 	}
 
 
+	/**
+	 * TODO 打开的Resource在哪关闭？？
+	 * @param className the class name (to be resolved to a ".class" file)
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public MetadataReader getMetadataReader(String className) throws IOException {
 		String resourcePath = ResourceLoader.CLASSPATH_URL_PREFIX +
@@ -93,6 +99,12 @@ public class SimpleMetadataReaderFactory implements MetadataReaderFactory {
 		return getMetadataReader(resource);
 	}
 
+	/**
+	 * 实际调用
+	 * @param resource the resource (pointing to a ".class" file)
+	 * @return
+	 * @throws IOException
+	 */
 	@Override
 	public MetadataReader getMetadataReader(Resource resource) throws IOException {
 		return new SimpleMetadataReader(resource, this.resourceLoader.getClassLoader());

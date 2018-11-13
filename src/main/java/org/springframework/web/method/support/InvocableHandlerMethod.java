@@ -151,7 +151,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 			MethodParameter parameter = parameters[i];
 			parameter.initParameterNameDiscovery(this.parameterNameDiscoverer);
 			GenericTypeResolver.resolveParameterType(parameter, getBean().getClass());
-			logger.info("得到参数类型：" + parameter.getParameterType().getName());
+			logger.info("获取参数类型：" + parameter.getParameterType().getName() + "的解析器");
 			args[i] = resolveProvidedArgument(parameter, providedArgs);
 			if (args[i] != null) {
 				continue;

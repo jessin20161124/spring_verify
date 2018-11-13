@@ -11,6 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +30,15 @@ public class User implements InitializingBean {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date birthday;
     // 不通过setter属性来注入，直接注入
-    @Value("${name}")
+//    @Value("${name}")
 //    @Value("#{config['name']}")
-    private String name = "xiaoming"; // 构造实例时先设置xiaoming，之后被@Value("${name}")覆盖
+//    @NotBlank(message = "名字不能为空啊")
+    private String name; // 构造实例时先设置xiaoming，之后被@Value("${name}")覆盖
     // 不用通过setter属性注入，直接注入，@Autowired也可以。
     @Value("${agent.list}")
     private String[] agentList;
 
+    @NotNull(message = "age不能为null")
     private Integer age;
 
     public Map<String, String> getMap() {

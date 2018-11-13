@@ -96,4 +96,5 @@
 
     <!-- PropertyPlaceholderConfigurer是一个BeanFactoryPostProcessor，只在该容器中起作用，不可继承-->
     <context:property-placeholder location="classpath*:/test.properties"/>
+
 </beans>

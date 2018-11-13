@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			"
+	default-lazy-init="false">
+
+    <bean id="offlineSqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="offlineSqlSessionFactory" />
+    </bean>
+
+    <bean id="offlineSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="offlineDruidDataSource" />
+        <property name="mapperLocations">
+            <list>
+                <value>classpath*:offlineMappers/*Mapper.xml</value>
+            </list>
+        </property>
+        <property name="configLocation" value="classpath:/spring/mybatis-config.xml"/>
+    </bean>
+
+    <bean id="offlineDruidDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="${offline.jdbc.driverClassName}" />
+        <property name="url" value="${offline.jdbc.url}" />
+        <property name="username" value="${offline.jdbc.username}" />
+        <property name="password" value="${offline.jdbc.password}" />
+        <!--initialSize: 初始化连接-->
+        <property name="initialSize" value="${offline.jdbc.initialSize}"/>
+        <!--minIdle: 最小空闲连接-->
+        <property name="minIdle" value="${offline.jdbc.minIdle}"/>
+        <!--maxActive: 最大连接数量-->
+        <property name="maxActive" value="${offline.jdbc.maxActive}"/>
+        <property name="maxWait" value="${offline.jdbc.maxWait}"/>
+        <property name="validationQuery" value="select 1"/>
+        <property name="filters" value="stat,slf4j" />
+    </bean>
+</beans>  

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatishomework.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="useGeneratedKeys" value="true"/>
+        <setting name="defaultExecutorType" value="REUSE"/>
+        <!--开启自动驼峰命名规则（camel case）映射，即从经典数据库列名 A_COLUMN 到经典 Java 属性名 aColumn 的类似映射。-->
+        <!-- 有了这一行，可以不写resultMap -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+    <typeHandlers>
+
+    </typeHandlers>
+
+
+
+</configuration>  

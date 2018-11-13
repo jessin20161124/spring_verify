@@ -16,27 +16,8 @@
 
 package org.springframework.validation.beanvalidation;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import javax.validation.Configuration;
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.MessageInterpolator;
-import javax.validation.TraversableResolver;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorContext;
-import javax.validation.ValidatorFactory;
-
-import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
-
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
@@ -49,6 +30,11 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ReflectionUtils;
+
+import javax.validation.*;
+import java.io.IOException;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * This is the central class for {@code javax.validation} (JSR-303) setup
@@ -82,6 +68,7 @@ import org.springframework.util.ReflectionUtils;
  * @see javax.validation.Validation#buildDefaultValidatorFactory()
  * @see javax.validation.ValidatorFactory#getValidator()
  */
+@Slf4j
 public class LocalValidatorFactoryBean extends SpringValidatorAdapter
 		implements ValidatorFactory, ApplicationContextAware, InitializingBean, DisposableBean {
 
@@ -135,12 +122,12 @@ public class LocalValidatorFactoryBean extends SpringValidatorAdapter
 	 * or to some special MessageSource setup for validation purposes only.
 	 * <p><b>NOTE:</b> This feature requires Hibernate Validator 4.3 or higher on the classpath.
 	 * You may nevertheless use a different validation provider but Hibernate Validator's
-	 * {@link ResourceBundleMessageInterpolator} class must be accessible during configuration.
+	 * {@link } class must be accessible during configuration.
 	 * <p>Specify either this property or {@link #setMessageInterpolator "messageInterpolator"},
 	 * not both. If you would like to build a custom MessageInterpolator, consider deriving from
-	 * Hibernate Validator's {@link ResourceBundleMessageInterpolator} and passing in a
+	 * Hibernate Validator's {@link } and passing in a
 	 * Spring-based {@code ResourceBundleLocator} when constructing your interpolator.
-	 * @see ResourceBundleMessageInterpolator
+	 * @see
 	 */
 	public void setValidationMessageSource(MessageSource messageSource) {
 		this.messageInterpolator = HibernateValidatorDelegate.buildMessageInterpolator(messageSource);
@@ -218,9 +205,11 @@ public class LocalValidatorFactoryBean extends SpringValidatorAdapter
 	@Override
 	public void afterPropertiesSet() {
 		@SuppressWarnings({"rawtypes", "unchecked"})
+	    // TODO provider为org.hibernate.validator.HibernateValidator
 		Configuration<?> configuration = (this.providerClass != null ?
 				Validation.byProvider(this.providerClass).configure() :
 				Validation.byDefaultProvider().configure());
+		log.info("校验器工厂生成配置：{}", configuration);
 
 		// Try Hibernate Validator 5.2's externalClassLoader(ClassLoader) method
 		if (this.applicationContext != null) {
@@ -233,6 +222,7 @@ public class LocalValidatorFactoryBean extends SpringValidatorAdapter
 			}
 		}
 
+		// TODO configuration -> org.hibernate.validator.internal.engine.ConfigurationImpl
 		MessageInterpolator targetInterpolator = this.messageInterpolator;
 		if (targetInterpolator == null) {
 			targetInterpolator = configuration.getDefaultMessageInterpolator();
@@ -275,6 +265,7 @@ public class LocalValidatorFactoryBean extends SpringValidatorAdapter
 		postProcessConfiguration(configuration);
 
 		this.validatorFactory = configuration.buildValidatorFactory();
+		log.info("validatorFactory为：{}", validatorFactory);
 		setTargetValidator(this.validatorFactory.getValidator());
 	}
 
@@ -377,6 +368,10 @@ public class LocalValidatorFactoryBean extends SpringValidatorAdapter
 		}
 	}
 
+	public static void main(String[] args) {
+		System.out.println(BeanUtils.isSimpleProperty(Date.class));
+	}
+
 	@Override
 	public void destroy() {
 		close();
@@ -389,7 +384,8 @@ public class LocalValidatorFactoryBean extends SpringValidatorAdapter
 	private static class HibernateValidatorDelegate {
 
 		public static MessageInterpolator buildMessageInterpolator(MessageSource messageSource) {
-			return new ResourceBundleMessageInterpolator(new MessageSourceResourceBundleLocator(messageSource));
+//			return new ResourceBundleMessageInterpolator(new MessageSourceResourceBundleLocator(messageSource));
+			return null;
 		}
 	}
 

@@ -16,9 +16,9 @@
 
 package org.springframework.validation.beanvalidation;
 
-import javax.validation.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.logging.LogFactory;
+import javax.validation.ValidationException;
 
 /**
  * {@link LocalValidatorFactoryBean} subclass that simply turns
@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Juergen Hoeller
  * @since 4.0.1
  */
+@Slf4j
 public class OptionalValidatorFactoryBean extends LocalValidatorFactoryBean {
 
 	@Override
@@ -40,7 +41,7 @@ public class OptionalValidatorFactoryBean extends LocalValidatorFactoryBean {
 			super.afterPropertiesSet();
 		}
 		catch (ValidationException ex) {
-			LogFactory.getLog(getClass()).debug("Failed to set up a Bean Validation provider", ex);
+			log.error("初始化校验器失败", ex);
 		}
 	}
 

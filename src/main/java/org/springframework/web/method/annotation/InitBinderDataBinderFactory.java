@@ -57,7 +57,7 @@ public class InitBinderDataBinderFactory extends DefaultDataBinderFactory {
 	 */
 	@Override
 	public void initBinder(WebDataBinder binder, NativeWebRequest request) throws Exception {
-		logger.info("调用BinderFactory的initBinder方法，调用所有注入的@InitBinder方法来初始化binder：{]", binder);
+		logger.info("调用BinderFactory的initBinder方法，调用所有注入的@InitBinder方法来初始化binder：{}", binder);
 		// TODO InitBinder方法能否处理该binder
 		for (InvocableHandlerMethod binderMethod : this.binderMethods) {
 			if (isBinderMethodApplicable(binderMethod, binder)) {

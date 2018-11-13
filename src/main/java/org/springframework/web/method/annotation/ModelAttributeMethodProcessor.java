@@ -119,6 +119,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 		if (binder.getTarget() != null) {
 			bindRequestParameters(binder, webRequest);
 			validateIfApplicable(binder, parameter);
+			// 封装绑定异常和转化异常、校验异常
 			if (binder.getBindingResult().hasErrors() && isBindExceptionRequired(binder, parameter)) {
 				throw new BindException(binder.getBindingResult());
 			}
@@ -126,6 +127,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 
 		// Add resolved attribute and BindingResult at the end of the model
 		Map<String, Object> bindingResultModel = binder.getBindingResult().getModel();
+		logger.info("添加model：{}到mavContainer中", bindingResultModel);
 		mavContainer.removeAttributes(bindingResultModel);
 		mavContainer.addAllAttributes(bindingResultModel);
 
@@ -173,6 +175,9 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 			if (validatedAnn != null || ann.annotationType().getSimpleName().startsWith("Valid")) {
 				Object hints = (validatedAnn != null ? validatedAnn.value() : AnnotationUtils.getValue(ann));
 				Object[] validationHints = (hints instanceof Object[] ? (Object[]) hints : new Object[] {hints});
+				// null
+				logger.info("绑定后参数校验，hints为：{}，validationHints为：{}，注解为：{}", hints, validationHints, ann);
+				// 一个元素的数组，且元素为null
 				binder.validate(validationHints);
 				break;
 			}
@@ -188,6 +193,7 @@ public class ModelAttributeMethodProcessor implements HandlerMethodArgumentResol
 	protected boolean isBindExceptionRequired(WebDataBinder binder, MethodParameter methodParam) {
 		int i = methodParam.getParameterIndex();
 		Class<?>[] paramTypes = methodParam.getMethod().getParameterTypes();
+		// 抛出异常时，下一个参数必须是Errors，如果不是，则抛出异常
 		boolean hasBindingResult = (paramTypes.length > (i + 1) && Errors.class.isAssignableFrom(paramTypes[i + 1]));
 		return !hasBindingResult;
 	}

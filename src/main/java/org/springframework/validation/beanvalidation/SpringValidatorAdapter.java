@@ -16,25 +16,16 @@
 
 package org.springframework.validation.beanvalidation;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import javax.validation.ConstraintViolation;
-import javax.validation.metadata.BeanDescriptor;
-import javax.validation.metadata.ConstraintDescriptor;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.NotReadablePropertyException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.util.Assert;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.SmartValidator;
+import org.springframework.validation.*;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.metadata.BeanDescriptor;
+import javax.validation.metadata.ConstraintDescriptor;
+import java.util.*;
 
 /**
  * Adapter that takes a JSR-303 {@code javax.validator.Validator}
@@ -47,6 +38,7 @@ import org.springframework.validation.SmartValidator;
  * @author Juergen Hoeller
  * @since 3.0
  */
+@Slf4j
 public class SpringValidatorAdapter implements SmartValidator, javax.validation.Validator {
 
 	private static final Set<String> internalAnnotationAttributes = new HashSet<String>(3);
@@ -72,7 +64,12 @@ public class SpringValidatorAdapter implements SmartValidator, javax.validation.
 	SpringValidatorAdapter() {
 	}
 
+	/**
+	 * TODO org.hibernate.validator.internal.engine.ValidatorImpl
+	 * @param targetValidator
+	 */
 	void setTargetValidator(javax.validation.Validator targetValidator) {
+		log.info("设置校验器：{}", targetValidator);
 		this.targetValidator = targetValidator;
 	}
 
@@ -98,14 +95,21 @@ public class SpringValidatorAdapter implements SmartValidator, javax.validation.
 		if (this.targetValidator != null) {
 			Set<Class<?>> groups = new LinkedHashSet<Class<?>>();
 			if (validationHints != null) {
+				// null
 				for (Object hint : validationHints) {
 					if (hint instanceof Class) {
 						groups.add((Class<?>) hint);
 					}
 				}
 			}
-			processConstraintViolations(
-					this.targetValidator.validate(target, groups.toArray(new Class<?>[groups.size()])), errors);
+			// groups = []
+			log.info("目标校验器：{}，开始校验：{}, groups : {}, errors : {}",
+					this.targetValidator, target, groups, errors);
+			Set<ConstraintViolation<Object>> obj = this.targetValidator.validate(target, groups.toArray(new Class<?>[groups.size()]));
+			log.info("目标校验器：{}，结束校验：{}, groups : {}, errors : {}，结果为：{}",
+					this.targetValidator, target, groups, errors, obj);
+			// TODO 将校验结果绑定到BindingResult中。
+			processConstraintViolations(obj, errors);
 		}
 	}
 
@@ -119,6 +123,8 @@ public class SpringValidatorAdapter implements SmartValidator, javax.validation.
 		for (ConstraintViolation<Object> violation : violations) {
 			String field = determineField(violation);
 			FieldError fieldError = errors.getFieldError(field);
+			log.info("处理校验结果：{}，属性为：{}，fieldError : {}", violation, field, fieldError);
+
 			if (fieldError == null || !fieldError.isBindingFailure()) {
 				try {
 					ConstraintDescriptor<?> cd = violation.getConstraintDescriptor();
@@ -137,9 +143,14 @@ public class SpringValidatorAdapter implements SmartValidator, javax.validation.
 						else {
 							Object rejectedValue = getRejectedValue(field, violation, bindingResult);
 							String[] errorCodes = bindingResult.resolveMessageCodes(errorCode, field);
-							bindingResult.addError(new FieldError(
+							// TODO bindingResult添加错误
+							FieldError currentFieldError = new FieldError(
 									errors.getObjectName(), nestedField, rejectedValue, false,
-									errorCodes, errorArgs, violation.getMessage()));
+									errorCodes, errorArgs, violation.getMessage());
+							bindingResult.addError(currentFieldError);
+							log.info("绑定filed为：{}，嵌入属性为：{}，错误码为：{}, {}，当前fieldError : {} ",
+									field, nestedField, errorCode, errorCodes, currentFieldError);
+
 						}
 					}
 					else {

@@ -259,12 +259,6 @@ class AnnotationDrivenBeanDefinitionParser implements BeanDefinitionParser {
 		// 注入的是类全名
 		logger.info("注入：{}", HANDLER_ADAPTER_BEAN_NAME);
 		readerContext.getRegistry().registerBeanDefinition(HANDLER_ADAPTER_BEAN_NAME , handlerAdapterDef);
-		try {
-			logger.info("获取 : {}，结果为：{}", HANDLER_ADAPTER_BEAN_NAME, readerContext.getRegistry().getBeanDefinition(HANDLER_ADAPTER_BEAN_NAME));
-			logger.info("获取 : {}，结果为：{}", HANDLER_ADAPTER_BEAN_NAME + "#0", readerContext.getRegistry().getBeanDefinition(HANDLER_ADAPTER_BEAN_NAME + "#0"));
-		} catch (Exception e) {
-			logger.error("获取：{}出错", HANDLER_ADAPTER_BEAN_NAME, e);
-		}
 
 		String uriCompContribName = MvcUriComponentsBuilder.MVC_URI_COMPONENTS_CONTRIBUTOR_BEAN_NAME;
 		RootBeanDefinition uriCompContribDef = new RootBeanDefinition(CompositeUriComponentsContributorFactoryBean.class);

@@ -37,89 +37,93 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class HandlerMethodArgumentResolverComposite implements HandlerMethodArgumentResolver {
 
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	private final List<HandlerMethodArgumentResolver> argumentResolvers =
-			new LinkedList<HandlerMethodArgumentResolver>();
+    private final List<HandlerMethodArgumentResolver> argumentResolvers =
+            new LinkedList<HandlerMethodArgumentResolver>();
 
-	private final Map<MethodParameter, HandlerMethodArgumentResolver> argumentResolverCache =
-			new ConcurrentHashMap<MethodParameter, HandlerMethodArgumentResolver>(256);
-
-
-	/**
-	 * Add the given {@link HandlerMethodArgumentResolver}.
-	 */
-	public HandlerMethodArgumentResolverComposite addResolver(HandlerMethodArgumentResolver resolver) {
-		this.argumentResolvers.add(resolver);
-		return this;
-	}
-
-	/**
-	 * Add the given {@link HandlerMethodArgumentResolver}s.
-	 */
-	public HandlerMethodArgumentResolverComposite addResolvers(List<? extends HandlerMethodArgumentResolver> resolvers) {
-		if (resolvers != null) {
-			for (HandlerMethodArgumentResolver resolver : resolvers) {
-				this.argumentResolvers.add(resolver);
-			}
-		}
-		return this;
-	}
-
-	/**
-	 * Return a read-only list with the contained resolvers, or an empty list.
-	 */
-	public List<HandlerMethodArgumentResolver> getResolvers() {
-		return Collections.unmodifiableList(this.argumentResolvers);
-	}
+    private final Map<MethodParameter, HandlerMethodArgumentResolver> argumentResolverCache =
+            new ConcurrentHashMap<MethodParameter, HandlerMethodArgumentResolver>(256);
 
 
-	/**
-	 * Whether the given {@linkplain MethodParameter method parameter} is supported by any registered
-	 * {@link HandlerMethodArgumentResolver}.
-	 */
-	@Override
-	public boolean supportsParameter(MethodParameter parameter) {
-		return (getArgumentResolver(parameter) != null);
-	}
+    /**
+     * Add the given {@link HandlerMethodArgumentResolver}.
+     */
+    public HandlerMethodArgumentResolverComposite addResolver(HandlerMethodArgumentResolver resolver) {
+        this.argumentResolvers.add(resolver);
+        return this;
+    }
 
-	/**
-	 * TODO MethodParameter包装了该参数所在的方法、构造函数、以及参数的对应位置，参数对应的解析器会缓存起来，以便下次直接使用
-	 * Iterate over registered {@link HandlerMethodArgumentResolver}s and invoke the one that supports it.
-	 * @throws IllegalStateException if no suitable {@link HandlerMethodArgumentResolver} is found.
-	 */
-	@Override
-	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
-			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+    /**
+     * Add the given {@link HandlerMethodArgumentResolver}s.
+     */
+    public HandlerMethodArgumentResolverComposite addResolvers(List<? extends HandlerMethodArgumentResolver> resolvers) {
+        if (resolvers != null) {
+            for (HandlerMethodArgumentResolver resolver : resolvers) {
+                this.argumentResolvers.add(resolver);
+            }
+        }
+        return this;
+    }
 
-		HandlerMethodArgumentResolver resolver = getArgumentResolver(parameter);
-		if (resolver == null) {
-			throw new IllegalArgumentException("Unknown parameter type [" + parameter.getParameterType().getName() + "]");
-		}
-		return resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
-	}
+    /**
+     * Return a read-only list with the contained resolvers, or an empty list.
+     */
+    public List<HandlerMethodArgumentResolver> getResolvers() {
+        return Collections.unmodifiableList(this.argumentResolvers);
+    }
 
-	/**
-	 * Find a registered {@link HandlerMethodArgumentResolver} that supports the given method parameter.
-	 */
-	private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
-		HandlerMethodArgumentResolver result = this.argumentResolverCache.get(parameter);
-		if (result == null) {
-			for (HandlerMethodArgumentResolver methodArgumentResolver : this.argumentResolvers) {
-				if (logger.isInfoEnabled()) {
-					logger.info("测试参数解析器 [" + methodArgumentResolver + "] 是否支持 [" +
-							parameter.getGenericParameterType() + "]");
-				}
-				if (methodArgumentResolver.supportsParameter(parameter)) {
-					logger.info("参数解析器 [" + methodArgumentResolver + "] 支持 [" +
-							parameter.getGenericParameterType() + "]");
-					result = methodArgumentResolver;
-					this.argumentResolverCache.put(parameter, result);
-					break;
-				}
-			}
-		}
-		return result;
-	}
+
+    /**
+     * Whether the given {@linkplain MethodParameter method parameter} is supported by any registered
+     * {@link HandlerMethodArgumentResolver}.
+     */
+    @Override
+    public boolean supportsParameter(MethodParameter parameter) {
+        return (getArgumentResolver(parameter) != null);
+    }
+
+    /**
+     * TODO MethodParameter包装了该参数所在的方法、构造函数、以及参数的对应位置，参数对应的解析器会缓存起来，以便下次直接使用
+     * Iterate over registered {@link HandlerMethodArgumentResolver}s and invoke the one that supports it.
+     *
+     * @throws IllegalStateException if no suitable {@link HandlerMethodArgumentResolver} is found.
+     */
+    @Override
+    public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
+                                  NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
+
+        HandlerMethodArgumentResolver resolver = getArgumentResolver(parameter);
+        if (resolver == null) {
+            throw new IllegalArgumentException("Unknown parameter type [" + parameter.getParameterType().getName() + "]");
+        }
+        return resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+    }
+
+    /**
+     * Find a registered {@link HandlerMethodArgumentResolver} that supports the given method parameter.
+     */
+    private HandlerMethodArgumentResolver getArgumentResolver(MethodParameter parameter) {
+        HandlerMethodArgumentResolver result = this.argumentResolverCache.get(parameter);
+        if (result == null) {
+            for (HandlerMethodArgumentResolver methodArgumentResolver : this.argumentResolvers) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("测试参数解析器 [" + methodArgumentResolver + "] 是否支持 [" +
+                            parameter.getGenericParameterType() + "]");
+                }
+                if (methodArgumentResolver.supportsParameter(parameter)) {
+                    logger.info("参数解析器 [" + methodArgumentResolver + "] 支持 [" +
+                            parameter.getGenericParameterType() + "]");
+                    result = methodArgumentResolver;
+                    this.argumentResolverCache.put(parameter, result);
+                    break;
+                }
+            }
+        } else {
+            logger.info("测试参数解析器 [" + result + "] 支持 [" + parameter.getGenericParameterType() + "]");
+
+        }
+        return result;
+    }
 
 }

@@ -16,23 +16,17 @@
 
 package org.springframework.validation.beanvalidation;
 
-import java.lang.reflect.Method;
-import java.util.Set;
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.hibernate.validator.HibernateValidator;
-
 import org.springframework.core.BridgeMethodResolver;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.annotation.Validated;
+
+import javax.validation.*;
+import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  * An AOP Alliance {@link MethodInterceptor} implementation that delegates to a
@@ -55,8 +49,7 @@ import org.springframework.validation.annotation.Validated;
  * @author Juergen Hoeller
  * @since 3.1
  * @see MethodValidationPostProcessor
- * @see javax.validation.executable.ExecutableValidator
- * @see org.hibernate.validator.method.MethodValidator
+ *
  */
 public class MethodValidationInterceptor implements MethodInterceptor {
 
@@ -175,28 +168,30 @@ public class MethodValidationInterceptor implements MethodInterceptor {
 	private static class HibernateValidatorDelegate {
 
 		public static ValidatorFactory buildValidatorFactory() {
-			return Validation.byProvider(HibernateValidator.class).configure().buildValidatorFactory();
+//			return Validation.byProvider(HibernateValidator.class).configure().buildValidatorFactory();
+			return null;
 		}
 
 		@SuppressWarnings("deprecation")
 		public static Object invokeWithinValidation(MethodInvocation invocation, Validator validator, Class<?>[] groups)
 				throws Throwable {
 
-			org.hibernate.validator.method.MethodValidator methodValidator =
-					validator.unwrap(org.hibernate.validator.method.MethodValidator.class);
-			Set<org.hibernate.validator.method.MethodConstraintViolation<Object>> result =
-					methodValidator.validateAllParameters(
-							invocation.getThis(), invocation.getMethod(), invocation.getArguments(), groups);
-			if (!result.isEmpty()) {
-				throw new org.hibernate.validator.method.MethodConstraintViolationException(result);
-			}
-			Object returnValue = invocation.proceed();
-			result = methodValidator.validateReturnValue(
-					invocation.getThis(), invocation.getMethod(), returnValue, groups);
-			if (!result.isEmpty()) {
-				throw new org.hibernate.validator.method.MethodConstraintViolationException(result);
-			}
-			return returnValue;
+//			org.hibernate.validator.method.MethodValidator methodValidator =
+//					validator.unwrap(org.hibernate.validator.method.MethodValidator.class);
+//			Set<org.hibernate.validator.method.MethodConstraintViolation<Object>> result =
+//					methodValidator.validateAllParameters(
+//							invocation.getThis(), invocation.getMethod(), invocation.getArguments(), groups);
+//			if (!result.isEmpty()) {
+//				throw new org.hibernate.validator.method.MethodConstraintViolationException(result);
+//			}
+//			Object returnValue = invocation.proceed();
+//			result = methodValidator.validateReturnValue(
+//					invocation.getThis(), invocation.getMethod(), returnValue, groups);
+//			if (!result.isEmpty()) {
+//				throw new org.hibernate.validator.method.MethodConstraintViolationException(result);
+//			}
+//			return returnValue;
+			return null;
 		}
 	}
 
