@@ -10,6 +10,8 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.Properties;
+
 /**
  * @author zexin.guo
  * @create 2018-08-01 上午7:46
@@ -31,11 +33,17 @@ public class ApplicationContextTest {
     @Test
     public void test2 () {
         HelloService helloService = applicationContext.getBean(HelloService.class);
-        log.info("HelloService为：" + helloService.getClass());
+        log.info("HelloService为：{}", helloService.getClass());
         helloService.hello();
         helloService.toString();
         log.info("HelloService : {}", helloService instanceof Advised);
         log.info("HelloService : {}", helloService instanceof SpringProxy);
         log.info("HelloService : {}", helloService instanceof HelloServiceImpl);
+    }
+
+    @Test
+    public void test3 () {
+        Properties config = applicationContext.getBean("config", Properties.class);
+        log.info("HelloService为：{}", config);
     }
 }

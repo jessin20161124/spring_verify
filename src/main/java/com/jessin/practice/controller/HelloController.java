@@ -115,7 +115,7 @@ public class HelloController {
 
     /**
      * TODO 拦截器和过滤器均需添加异步支持： <async-supported>true</async-supported>，且servlet为3.0及以上
-     * 提前释放当前线程，交由其他线程处理复杂的任务，其他线程处理得到结果后，出发另一个线程将结果返回给浏览器，
+     * 提前释放当前线程，交由其他线程处理复杂的任务，其他线程处理得到结果后，触发另一个线程将结果返回给浏览器，
      * 这一过程中response一直打开。
      * 在返回值处理器中处理
      * @see CallableMethodReturnValueHandler

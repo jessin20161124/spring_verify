@@ -18,17 +18,18 @@
 ">
 
 
-    <context:component-scan base-package="com.jessin.practice.bean,com.jessin.practice.service,
-com.jessin.practice.bean,com.jessin.practice.listener" >
+    <context:component-scan base-package="com.jessin.practice.bean,com.jessin.practice.service,com.jessin.practice.bean,com.jessin.practice.listener,com.jessin.practice.config" >
+
     </context:component-scan>
     <!-- PropertyPlaceholderConfigurer是一个BeanFactoryPostProcessor，只在该容器中起作用，不可继承-->
     <context:property-placeholder location="classpath*:/test.properties,classpath*:jdbc.properties" />
-    <util:properties id="config" location="classpath:/test.properties"/>
+    <!-- 在XmlWebApplicationContext中，是相对于ServletContext的 -->
+    <util:properties id="config" location="test1.properties"/>
 
     <!--<bean id="abc" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
         <!--<property name="locations">-->
             <!--<list>-->
-                <!--<value>classpath*:/test.properties</value>-->
+                <!--<value>classpath*:/test1.properties</value>-->
             <!--</list>-->
         <!--</property>-->
     <!--</bean>-->

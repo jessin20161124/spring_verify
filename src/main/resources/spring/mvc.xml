@@ -40,7 +40,7 @@
     <context:component-scan base-package="com.jessin.practice.controller">
     </context:component-scan>
 
-    <!--<util:properties id="config" location="classpath:test.properties" />-->
+    <!--<util:properties id="config" location="classpath:test1.properties" />-->
     <!--&lt;!&ndash; properties文件放在mvc里面，@Value("${name}")才能起作用&ndash;&gt;-->
 
 
