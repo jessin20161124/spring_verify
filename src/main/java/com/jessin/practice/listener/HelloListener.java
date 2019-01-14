@@ -18,6 +18,10 @@ public class HelloListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(HelloListener.class);
     private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd");
 
+    /**
+     * TODO @EventListener和@Order都在EventListenerMethodProcessor进行处理
+     * @param event
+     */
     @EventListener
     @Order(1)
     @Async("executor")

@@ -6,12 +6,22 @@
 			"
 	default-lazy-init="false">
 
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- mapper接口类，递归扫描，多个包可以用,分割 -->
+        <property name="basePackage" value="com.jessin.practice.mappers"/>
+        <!-- 只有加Repository注解的dao接口才会被扫描注入到spring中 -->
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+        <property name="sqlSessionTemplateBeanName" value="offlineSqlSession"/>
+    </bean>
+
     <bean id="offlineSqlSession" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="offlineSqlSessionFactory" />
     </bean>
 
     <bean id="offlineSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="offlineDruidDataSource" />
+        <!-- 类型别名映射，可以不写类的完整路径，直接写类名（首字母小写），多个时用逗号分割 -->
+        <property name="typeAliasesPackage" value="com.jessin.practice.bean"/>
         <property name="mapperLocations">
             <list>
                 <value>classpath*:offlineMappers/*Mapper.xml</value>
@@ -35,4 +45,5 @@
         <property name="validationQuery" value="select 1"/>
         <property name="filters" value="stat,slf4j" />
     </bean>
+
 </beans>  

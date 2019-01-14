@@ -19,7 +19,8 @@ import javax.annotation.Resource;
 
 @Configuration
 // propertyResource只会将属性注入到当前环境中，只能从当前环境中取。
-@PropertySource("test1.properties")
+@PropertySource("classpath:test.properties")
+//@PropertySource("test1.properties")
 //@ImportResource("/abc.xml")
 //@Import(MyConfiguration.class)
 @Slf4j
@@ -33,7 +34,7 @@ public class MyConfiguration {
      * 从值解析器中取值，如果有PropertySourcesPlaceholderConfigurer(
      * <context:property-placeholder location="classpath*:/test.properties,classpath*:jdbc.properties" />)，则会先从环境变量中取，再从对应配置文件中取
      */
-    @Value("${myName}")
+    @Value("${myName:default}")
     private String name;
 
     @Resource

@@ -406,6 +406,7 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 		}
 		// 使用ControllerAdvice进行处理
 		for (Entry<ControllerAdviceBean, ExceptionHandlerMethodResolver> entry : this.exceptionHandlerAdviceCache.entrySet()) {
+			logger.info("判断ControllerAdviceBean：" + entry.getKey() + "是否能够处理handlerType : " + handlerType);
 			if (entry.getKey().isApplicableToBeanType(handlerType)) {
 				ExceptionHandlerMethodResolver resolver = entry.getValue();
 				// 能处理该exception的方法

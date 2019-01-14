@@ -1084,7 +1084,6 @@ public class DispatcherServlet extends FrameworkServlet {
                 errorView = (mv != null);
             }
             logger.info("[Spring MVC] 7. 调用handler处理请求：" + request.getRequestURI() + "出现异常，获取异常视图");
-
         }
 
         // TODO mv == null 不用渲染了
@@ -1246,6 +1245,7 @@ public class DispatcherServlet extends FrameworkServlet {
         // Check registered HandlerExceptionResolvers...
         ModelAndView exMv = null;
         for (HandlerExceptionResolver handlerExceptionResolver : this.handlerExceptionResolvers) {
+            logger.info("7. 判断处理抛出的异常，hanlderExceptionResolver为：" + handlerExceptionResolver.getClass().getName());
             exMv = handlerExceptionResolver.resolveException(request, response, handler, ex);
             if (exMv != null) {
                 logger.info("7. 调用handlerExceptionResolver处理抛出的异常，hanlderExceptionResolver为：" + handlerExceptionResolver.getClass().getName());

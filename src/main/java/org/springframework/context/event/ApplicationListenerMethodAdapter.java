@@ -16,18 +16,8 @@
 
 package org.springframework.context.event;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.UndeclaredThrowableException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.PayloadApplicationEvent;
@@ -42,6 +32,15 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.UndeclaredThrowableException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * {@link GenericApplicationListener} adapter that delegates the processing of
@@ -106,6 +105,13 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 		processEvent(event);
 	}
 
+	/**
+	 * TODO org.springframework.context.event.AbstractApplicationEventMulticaster#supportsEvent(org.springframework.context.ApplicationListener, org.springframework.core.ResolvableType, java.lang.Class)
+	 * 判断当前listener是否能被预过滤出来。
+	 *
+	 * @param eventType 具体的事件类型，如ApplicationEvent，或者发布object时，对象是object
+	 * @return
+	 */
 	@Override
 	public boolean supportsEventType(ResolvableType eventType) {
 		for (ResolvableType declaredEventType : this.declaredEventTypes) {
@@ -152,6 +158,7 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 	}
 
 	/**
+	 * TODO 传递的入参解析...
 	 * Resolve the method arguments to use for the specified {@link ApplicationEvent}.
 	 * <p>These arguments will be used to invoke the method handled by this instance. Can
 	 * return {@code null} to indicate that no suitable arguments could be resolved and
@@ -330,6 +337,7 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 		ResolvableType payloadType = null;
 		if (event instanceof PayloadApplicationEvent) {
 			PayloadApplicationEvent<?> payloadEvent = (PayloadApplicationEvent<?>) event;
+			// TODO 获取泛型中的类型
 			payloadType = payloadEvent.getResolvableType().as(
 					PayloadApplicationEvent.class).getGeneric(0);
 		}
@@ -357,6 +365,7 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 		if (ann != null && ann.classes().length > 0) {
 			List<ResolvableType> types = new ArrayList<ResolvableType>();
 			for (Class<?> eventType : ann.classes()) {
+				// TODO forClass
 				types.add(ResolvableType.forClass(eventType));
 			}
 			return types;

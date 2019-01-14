@@ -4,7 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:task="http://www.springframework.org/schema/task" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
@@ -12,7 +12,7 @@
        http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <!--<bean id="simpleUrlMapping"-->
     <!--class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">-->
@@ -37,8 +37,13 @@
     <!--</bean>-->
 
     <!--&lt;!&ndash; 扫描类包，将标注Spring注解的类自动转化Bean，同时完成Bean的注入 &ndash;&gt;-->
+    <!-- 会去父容器中查找对应的aop advice-->
     <context:component-scan base-package="com.jessin.practice.controller">
     </context:component-scan>
+
+
+    <!-- 强制使用CGLIB动态代理 -->
+    <!--<aop:aspectj-autoproxy proxy-target-class="true"/>-->
 
     <!--<util:properties id="config" location="classpath:test1.properties" />-->
     <!--&lt;!&ndash; properties文件放在mvc里面，@Value("${name}")才能起作用&ndash;&gt;-->

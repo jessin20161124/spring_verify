@@ -18,6 +18,7 @@ import java.util.Properties;
  **/
 @Slf4j
 public class ApplicationContextTest {
+
     ApplicationContext applicationContext = new ClassPathXmlApplicationContext("/spring/app.xml");
 
     @Test
@@ -45,5 +46,10 @@ public class ApplicationContextTest {
     public void test3 () {
         Properties config = applicationContext.getBean("config", Properties.class);
         log.info("HelloService为：{}", config);
+    }
+
+    @Test
+    public void test4 () {
+        applicationContext.publishEvent("hello world");
     }
 }

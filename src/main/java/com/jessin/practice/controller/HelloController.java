@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.jessin.practice.bean.Friend;
 import com.jessin.practice.bean.User;
 import com.jessin.practice.event.HelloEvent;
+import com.jessin.practice.mappers.UserDao;
 import com.jessin.practice.service.AbstractService;
 import com.jessin.practice.service.ChildService;
 import com.jessin.practice.service.factoryBean.ConnServer;
@@ -49,6 +50,9 @@ public class HelloController {
     private List<AbstractService> abstractServiceList;
     @Resource
     private Map<String, AbstractService> abstractServiceMap;
+
+    @Resource
+    private UserDao userDao;
 
     @Resource
     private ConnServer connServer;
@@ -100,7 +104,7 @@ public class HelloController {
      * 使用@RequestParam注解，表示使用RequestParamMethodHandlerResolver进行处理
      * 否则使用兜底的ModelAttributeHandlerResolver进行处理
      *
-     * 另外，返回值如果没有标注@ResponseBody，则使员工ModelAttributeHandlerResolver进行解析，
+     * 另外，返回值如果没有标注@ResponseBody，则使用ModelAttributeHandlerResolver进行解析，
      * 这时会把返回值User放到ModelAndView中，但是没有View，所以会使用默认的view，也就是该url；
      * 由于没有注入视图解析器，默认从dispatchServlet.properties中获取到InternalResourceViewResolver得到
      * InternalResourceView，最后render时，由于资源不存在，所以出错了。。
@@ -350,5 +354,23 @@ public class HelloController {
         Map<String, Object> map = Maps.newHashMap();
         map.put("error", "抛出异常了");
         return map;
+    }
+    @RequestMapping(value = "/helloPost",method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, String> helloPost(@RequestParam String hello) {
+        LOGGER.info("入参为：{}", hello);
+        Map<String, String> dataMap = new HashMap(2);
+        dataMap.put("hello", hello);
+        return dataMap;
+    }
+
+    /**
+     * http://localhost:8081/practice/helloUser
+     * @return
+     */
+    @RequestMapping(value = "/helloUser")
+    @ResponseBody
+    public User helloUser() {
+        return userDao.selectUser();
     }
 }

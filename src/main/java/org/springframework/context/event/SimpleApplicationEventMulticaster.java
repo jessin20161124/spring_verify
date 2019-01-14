@@ -16,15 +16,14 @@
 
 package org.springframework.context.event;
 
-import java.util.concurrent.Executor;
-
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.ResolvableType;
 import org.springframework.util.ErrorHandler;
+
+import java.util.concurrent.Executor;
 
 /**
  * Simple implementation of the {@link ApplicationEventMulticaster} interface.
@@ -66,6 +65,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 
 
 	/**
+	 * TODO 默认不注入executor，必须重新注入SimpleApplicationEventMulticaster（特定的beanName），设置TaskExecutor
 	 * Set a custom executor (typically a {@link org.springframework.core.task.TaskExecutor})
 	 * to invoke each listener with.
 	 * <p>Default is equivalent to {@link org.springframework.core.task.SyncTaskExecutor},
@@ -125,6 +125,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 	public void multicastEvent(final ApplicationEvent event, ResolvableType eventType) {
 		ResolvableType type = (eventType != null ? eventType : resolveDefaultEventType(event));
 		for (final ApplicationListener<?> listener : getApplicationListeners(event, type)) {
+			// TODO executor怎么注入
 			Executor executor = getTaskExecutor();
 			if (executor != null) {
 				executor.execute(new Runnable() {
