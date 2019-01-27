@@ -51,7 +51,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 
 
 	/**
-	 * 在设置BeanFactory时，就设置了
+	 * TODO 在设置BeanFactory时，就设置了
 	 * @param beanFactory
 	 */
 	@Override
@@ -69,7 +69,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	}
 
 	/**
-	 * 实现父类的抽象方法
+	 * TODO 实现父类的抽象方法，过滤符合该类的advisor
 	 * @param beanClass the class of the bean to advise
 	 * @param beanName the name of the bean
 	 * @param targetSource

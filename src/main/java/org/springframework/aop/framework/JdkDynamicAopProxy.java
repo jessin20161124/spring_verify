@@ -212,7 +212,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 			}
 			else {
 				// We need to create a method invocation...
-				// TODO 封装所有Advisor，也就是MethodBeforeServcie等为MethodInterceptor，所有逻辑都已经装好了，无需拼接增强和连接点
+				// TODO 封装所有Advisor，也就是MethodBeforeAdvice等为MethodInterceptor，所有逻辑都已经装好了，无需拼接增强和连接点
 				invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
 				// Proceed to the joinpoint through the interceptor chain.
 				// 注意，chain里面的方法也可能调用这个proceed，从而构成递归

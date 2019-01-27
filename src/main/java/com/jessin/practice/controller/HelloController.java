@@ -1,12 +1,13 @@
 package com.jessin.practice.controller;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.jessin.practice.bean.Friend;
 import com.jessin.practice.bean.User;
 import com.jessin.practice.event.HelloEvent;
-import com.jessin.practice.mappers.UserDao;
 import com.jessin.practice.service.AbstractService;
 import com.jessin.practice.service.ChildService;
+import com.jessin.practice.service.UserService;
 import com.jessin.practice.service.factoryBean.ConnServer;
 import com.jessin.practice.service.test.BeanA;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class HelloController {
     private Map<String, AbstractService> abstractServiceMap;
 
     @Resource
-    private UserDao userDao;
+    private UserService userService;
 
     @Resource
     private ConnServer connServer;
@@ -150,13 +151,14 @@ public class HelloController {
     @ResponseBody
     public WebAsyncTask<User> asyncTaskSayUser(@RequestParam User user) {
         // 和配置中同时设置时，以这个为准。
-        WebAsyncTask webAsyncTask = new WebAsyncTask<User>(200, new Callable<User>() {
+        WebAsyncTask webAsyncTask = new WebAsyncTask<User>(20000, new Callable<User>() {
             @Override
             public User call() throws Exception {
                 Thread.sleep(4000);
                 return user;
             }
         });
+        List<String> a = Lists.newArrayList();
         webAsyncTask.onTimeout(new Callable() {
             @Override
             public Object call() throws Exception {
@@ -370,7 +372,7 @@ public class HelloController {
      */
     @RequestMapping(value = "/helloUser")
     @ResponseBody
-    public User helloUser() {
-        return userDao.selectUser();
+    public User helloUser(String name) {
+        return userService.query(name);
     }
 }

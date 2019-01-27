@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
  * @create 2018-09-29 上午9:53
  **/
 @Slf4j
-public class HelloBeforeAdvice implements MethodBeforeAdvice{
+public class HelloBeforeAdvice implements MethodBeforeAdvice {
 
     /**
      * Callback before a given method is invoked.

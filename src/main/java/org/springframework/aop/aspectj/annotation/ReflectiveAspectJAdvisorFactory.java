@@ -164,6 +164,14 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 	}
 
 
+	/**
+	 *
+	 * @param candidateAdviceMethod the candidate advice method
+	 * @param aspectInstanceFactory the aspect instance factory
+	 * @param declarationOrderInAspect 记录了在@Aspect的类中的顺序
+	 * @param aspectName the name of the aspect
+	 * @return
+	 */
 	@Override
 	public Advisor getAdvisor(Method candidateAdviceMethod, MetadataAwareAspectInstanceFactory aspectInstanceFactory,
 			int declarationOrderInAspect, String aspectName) {

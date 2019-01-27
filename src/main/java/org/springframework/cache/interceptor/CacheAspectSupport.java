@@ -16,18 +16,8 @@
 
 package org.springframework.cache.interceptor;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -41,13 +31,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.expression.AnnotatedElementKey;
 import org.springframework.expression.EvaluationContext;
-import org.springframework.util.Assert;
-import org.springframework.util.ClassUtils;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
+import org.springframework.util.*;
+
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Base class for caching aspects, such as the {@link CacheInterceptor}
@@ -213,6 +201,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	protected Collection<? extends Cache> getCaches(
 			CacheOperationInvocationContext<CacheOperation> context, CacheResolver cacheResolver) {
 
+		// TODO 拿到操作的所有缓存，如@Cacheable中的values()，注意该值对应CacheManager中的name
 		Collection<? extends Cache> caches = cacheResolver.resolveCaches(context);
 		if (caches.isEmpty()) {
 			throw new IllegalStateException("No cache could be resolved for '" +
@@ -225,7 +214,9 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	protected CacheOperationContext getOperationContext(
 			CacheOperation operation, Method method, Object[] args, Object target, Class<?> targetClass) {
 
+		// TODO operation和method和targetClass构成元数据，，而已缓存起来，不会变化，target和args可以变化
 		CacheOperationMetadata metadata = getCacheOperationMetadata(operation, method, targetClass);
+		// TODO 此实例每次都单独构建
 		return new CacheOperationContext(metadata, args, target);
 	}
 
@@ -245,6 +236,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 		CacheOperationMetadata metadata = this.metadataCache.get(cacheKey);
 		if (metadata == null) {
 			KeyGenerator operationKeyGenerator;
+			// TODO 注解处有指定，优先使用注解出的bean name，否则使用全局默认的
 			if (StringUtils.hasText(operation.getKeyGenerator())) {
 				operationKeyGenerator = getBean(operation.getKeyGenerator(), KeyGenerator.class);
 			}
@@ -262,6 +254,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 			else {
 				operationCacheResolver = getCacheResolver();
 			}
+			// TODO 找到对应的KeyGenerator和CacheManager，最后缓存起来
 			metadata = new CacheOperationMetadata(operation, method, targetClass,
 					operationKeyGenerator, operationCacheResolver);
 			this.metadataCache.put(cacheKey, metadata);
@@ -297,6 +290,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 		// to cope with cases where the AJ is pulled in automatically
 		if (this.initialized) {
 			Class<?> targetClass = getTargetClass(target);
+			// TODO 找到该类该方法上的@Cache相关注解，invoker包装原来的方法调用句炳
 			Collection<CacheOperation> operations = getCacheOperationSource().getCacheOperations(method, targetClass);
 			if (!CollectionUtils.isEmpty(operations)) {
 				return execute(invoker, new CacheOperationContexts(operations, method, args, target, targetClass));
@@ -330,6 +324,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 
 	private Object execute(CacheOperationInvoker invoker, CacheOperationContexts contexts) {
 		// Process any early evictions
+		// TODO 先逐出，获取到@CacheEvict相关注解，进行操作，无结果？？
 		processCacheEvicts(contexts.get(CacheEvictOperation.class), true, ExpressionEvaluator.NO_RESULT);
 
 		// Check if we have a cached item matching the conditions
@@ -337,19 +332,22 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 
 		// Collect puts from any @Cacheable miss, if no cached item is found
 		List<CachePutRequest> cachePutRequests = new LinkedList<CachePutRequest>();
+		// TODO 没命中，产生put request
 		if (cacheHit == null) {
 			collectPutRequests(contexts.get(CacheableOperation.class), ExpressionEvaluator.NO_RESULT, cachePutRequests);
 		}
 
 		Cache.ValueWrapper result = null;
 
-		// If there are no put requests, just use the cache hit
+		// If there are no put requests, just use the cache hit TODO 没有@Cacheable和@CachePut注解，先调用原来方法
+		// TODO 有@CachePut方法，一般会重新设置结果到缓存中
 		if (cachePutRequests.isEmpty() && !hasCachePut(contexts)) {
 			result = cacheHit;
 		}
 
 		// Invoke the method if don't have a cache hit
 		if (result == null) {
+			// TODO 原来方法执行的结果
 			result = new SimpleValueWrapper(invokeOperation(invoker));
 		}
 
@@ -358,10 +356,11 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 
 		// Process any collected put requests, either from @CachePut or a @Cacheable miss
 		for (CachePutRequest cachePutRequest : cachePutRequests) {
+			// TODO 将result重新放回缓存
 			cachePutRequest.apply(result.get());
 		}
 
-		// Process any late evictions
+		// TODO 一般是后逐出操作，Process any late evictions
 		processCacheEvicts(contexts.get(CacheEvictOperation.class), false, result.get());
 
 		return result.get();
@@ -397,7 +396,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	private void performCacheEvict(CacheOperationContext context, CacheEvictOperation operation, Object result) {
 		Object key = null;
 		for (Cache cache : context.getCaches()) {
-			if (operation.isCacheWide()) {
+			if (operation.isCacheWide()) { // TODO 清楚所有key
 				logInvalidating(context, operation, null);
 				doClear(cache);
 			}
@@ -425,6 +424,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	 * or {@code null} if none is found
 	 */
 	private Cache.ValueWrapper findCachedItem(Collection<CacheOperationContext> contexts) {
+		// TODO 从缓存中找到对应key的cache值
 		Object result = ExpressionEvaluator.NO_RESULT;
 		for (CacheOperationContext context : contexts) {
 			if (isConditionPassing(context, result)) {
@@ -454,6 +454,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 			Object result, Collection<CachePutRequest> putRequests) {
 
 		for (CacheOperationContext context : contexts) {
+			// TODO 默认是true
 			if (isConditionPassing(context, result)) {
 				Object key = generateKey(context, result);
 				putRequests.add(new CachePutRequest(context, key));
@@ -496,6 +497,9 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	}
 
 
+	/**
+	 * TODO 复数形式
+	 */
 	private class CacheOperationContexts {
 
 		private final MultiValueMap<Class<? extends CacheOperation>, CacheOperationContext> contexts =
@@ -505,6 +509,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 				Object[] args, Object target, Class<?> targetClass) {
 
 			for (CacheOperation operation : operations) {
+				// TODO 按照类进行分类，转化为class -> 多个CacheOperationContext，其中一个operation对应一个CacheOperationContext，一个operation对应一个注解
 				this.contexts.add(operation.getClass(), getOperationContext(operation, method, args, target, targetClass));
 			}
 		}
@@ -607,6 +612,11 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 			return true;
 		}
 
+		/**
+		 * TODO 默认会存起来
+		 * @param value
+		 * @return
+		 */
 		protected boolean canPutToCache(Object value) {
 			String unless = "";
 			if (this.metadata.operation instanceof CacheableOperation) {

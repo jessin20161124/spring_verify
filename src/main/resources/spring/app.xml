@@ -5,6 +5,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:task="http://www.springframework.org/schema/task"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:cache="http://www.springframework.org/schema/cache"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
          http://www.springframework.org/schema/context
@@ -15,6 +16,8 @@
         http://www.springframework.org/schema/task/spring-task.xsd
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/cache
+           http://www.springframework.org/schema/cache/spring-cache.xsd
 ">
 
     <aop:aspectj-autoproxy proxy-target-class="true"/>
@@ -23,8 +26,8 @@
 
     </context:component-scan>
     <!-- PropertyPlaceholderConfigurer是一个BeanFactoryPostProcessor，只在该容器中起作用，不可继承-->
-    <context:property-placeholder location="classpath*:/test.properties,classpath*:jdbc.properties" />
-    <!-- 在XmlWebApplicationContext中，是相对于ServletContext的 -->
+    <context:property-placeholder location="classpath*:/*.properties" />
+    <!-- 在XmlWebApplicationContext中，如果不加classpath，则是相对于ServletContext的 -->
     <util:properties id="config" location="classpath*:/test.properties"/>
 
     <!--<bean id="abc" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">-->
@@ -54,7 +57,7 @@
     <!--</bean>-->
 
     <!-- http://docs.spring.io/spring/docs/current/spring-framework-reference/html/scheduling.html -->
-    <task:executor id="executor" pool-size="50-100" queue-capacity="1600" keep-alive="120"/>
+    <task:executor id="executor" pool-size="1-1" queue-capacity="1" keep-alive="120"/>
     <!-- 这里也可以实现异步EventListener？且必须有注解@Async？-->
     <task:annotation-driven executor="executor" />
 
@@ -72,4 +75,21 @@
         </property>
     </bean>
     <import resource="offline-mybatis.xml"/>
+
+
+    <cache:annotation-driven/>
+
+    <!-- TODO 缓存管理器中拥有的缓存，name为缓存的key，缓存需要实现Cache接口 -->
+    <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+        <property name="caches">
+            <set>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean">
+                    <property name="name" value="default"/>
+                </bean>
+                <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean">
+                    <property name="name" value="accountCache"/>
+                </bean>
+            </set>
+        </property>
+    </bean>
 </beans>

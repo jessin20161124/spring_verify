@@ -114,6 +114,7 @@ class AnnotationDrivenCacheBeanDefinitionParser implements BeanDefinitionParser 
 		if (StringUtils.hasText(name)) {
 			def.getPropertyValues().add("cacheResolver", new RuntimeBeanReference(name.trim()));
 		}
+		// TODO 使用默认的cacheManager bean
 		if (!StringUtils.hasText(name) || setBoth) {
 			def.getPropertyValues().add("cacheManager",
 					new RuntimeBeanReference(CacheNamespaceHandler.extractCacheManager(element)));
@@ -150,6 +151,7 @@ class AnnotationDrivenCacheBeanDefinitionParser implements BeanDefinitionParser 
 				interceptorDef.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 				parseCacheResolution(element, interceptorDef, false);
 				parseErrorHandler(element, interceptorDef);
+				// TODO 默认使用CacheInterceptor中的SimpleKeyGenerator
 				CacheNamespaceHandler.parseKeyGenerator(element, interceptorDef);
 				interceptorDef.getPropertyValues().add("cacheOperationSources", new RuntimeBeanReference(sourceName));
 				String interceptorName = parserContext.getReaderContext().registerWithGeneratedName(interceptorDef);

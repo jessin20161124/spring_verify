@@ -16,19 +16,18 @@
 
 package org.springframework.cache.interceptor;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.context.expression.AnnotatedElementKey;
+import org.springframework.core.BridgeMethodResolver;
+import org.springframework.util.ClassUtils;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.springframework.context.expression.AnnotatedElementKey;
-import org.springframework.core.BridgeMethodResolver;
-import org.springframework.util.ClassUtils;
 
 /**
  * Abstract implementation of {@link CacheOperation} that caches
@@ -78,6 +77,7 @@ public abstract class AbstractFallbackCacheOperationSource implements CacheOpera
 
 
 	/**
+	 * TODO 获取该类该方法上所有的@Cacheable/@CachePut/@CacheEvict注解，并转换为CacheOperation，这里会进行缓存
 	 * Determine the caching attribute for this method invocation.
 	 * <p>Defaults to the class's caching attribute if no method attribute is found.
 	 * @param method the method for the current invocation (never {@code null})
@@ -120,6 +120,12 @@ public abstract class AbstractFallbackCacheOperationSource implements CacheOpera
 		return new AnnotatedElementKey(method, targetClass);
 	}
 
+	/**
+	 * TODO 优先使用该方法的@Cache相关注解，如果方法没有使用该类上的注解
+	 * @param method
+	 * @param targetClass
+	 * @return
+	 */
 	private Collection<CacheOperation> computeCacheOperations(Method method, Class<?> targetClass) {
 		// Don't allow no-public methods as required.
 		if (allowPublicMethodsOnly() && !Modifier.isPublic(method.getModifiers())) {
