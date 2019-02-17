@@ -396,7 +396,8 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 	private void performCacheEvict(CacheOperationContext context, CacheEvictOperation operation, Object result) {
 		Object key = null;
 		for (Cache cache : context.getCaches()) {
-			if (operation.isCacheWide()) { // TODO 清楚所有key
+			// TODO 清除所有key
+			if (operation.isCacheWide()) {
 				logInvalidating(context, operation, null);
 				doClear(cache);
 			}

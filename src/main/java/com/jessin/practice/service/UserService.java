@@ -50,7 +50,7 @@ public class UserService {
      */
     @CacheEvict(value="accountCache",key="#user.getName()")
     public void updateAccount(User user) {
-//        updateDB(user);
+//
         log.info("更新完成后再逐出该key");
     }
 

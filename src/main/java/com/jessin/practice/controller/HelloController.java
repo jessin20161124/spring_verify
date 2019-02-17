@@ -339,7 +339,7 @@ public class HelloController {
 
     @PostConstruct
     public void init() {
-        LOGGER.error("map的大小为：{}, {}", abstractServiceMap.size(), abstractServiceMap);
+        LOGGER.info("map的大小为：{}, {}", abstractServiceMap.size(), abstractServiceMap);
     }
 
     public static void main(String[] args) {

@@ -2,7 +2,6 @@ package com.jessin.practice.servlet;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,7 +12,7 @@ import java.io.IOException;
  * @author zexin.guo
  * @create 2018-10-21 下午4:31
  **/
-@WebServlet(urlPatterns = "/hello")
+//@WebServlet(urlPatterns = "/hello")
 @Slf4j
 public class HelloWorldServlet extends HttpServlet {
 

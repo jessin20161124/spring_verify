@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false" scan="true" scanPeriod="30 seconds">
     <!-- 定义日志输出格式 -->
+    <!-- 在app1目录logs写入日志文件 -->
+    <property name="log.dir" value="${catalina.base}/logs" />
     <property name="sta_pattern" value="%d{MM-dd HH:mm:ss.SSS} %5p %c.%M:%L [%thread] %m%n"/>
     <property name ="encoding" value="UTF-8"/>
 
@@ -10,7 +12,7 @@
             <level>error</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.dir}/error.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>60</maxHistory>
         </rollingPolicy>
         <encoder charset="UTF-8">
@@ -20,7 +22,7 @@
 
     <appender name="default"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>logs/spring_verify.log</File>
+        <File>${log.dir}/spring_verify.log</File>
         <prudent>false</prudent>
         <Append>true</Append>
         <encoder>
@@ -28,7 +30,7 @@
             <charset>${encoding}</charset>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/spring_verify.%d{yyyy-MM-dd-HH}.log
+            <fileNamePattern>${log.dir}/spring_verify.%d{yyyy-MM-dd-HH}.log
             </fileNamePattern>
         </rollingPolicy>
         <maxHistory>7</maxHistory>

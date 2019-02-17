@@ -29,6 +29,8 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.18</version>
+            <!-- TODO lombok可以不打到war中，编译期起作用，运行期不起作用了 -->
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -185,8 +187,6 @@
             <groupId>aopalliance</groupId>
             <artifactId>aopalliance</artifactId>
             <version>1.0</version>
-            <scope>compile</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.caucho</groupId>
@@ -480,7 +480,6 @@
             <artifactId>aspectjweaver</artifactId>
             <version>1.8.9</version>
             <scope>compile</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.beanshell</groupId>
@@ -502,7 +501,7 @@
             <artifactId>validation-api</artifactId>
             <version>1.0.0.GA</version>
             <scope>compile</scope>
-            <optional>true</optional>
+            <!--<optional>true</optional>-->
         </dependency>
         <!-- TODO 上面仅仅提供了一个api，具体还要引进具体的实现类，如这里是hibernate-validator。javax.validation.constraints.NotNull-->
         <dependency>
@@ -510,7 +509,8 @@
             <artifactId>hibernate-validator</artifactId>
             <version>4.3.2.Final</version>
             <scope>compile</scope>
-            <optional>true</optional>
+            <!-- TODO optional不会打包到war中 -->
+            <!--<optional>true</optional>-->
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
@@ -608,10 +608,20 @@
             <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.4.11</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <finalName>practice</finalName>
+        <!--
+            TODO 打包成ROOT.war，保证最后在webapps中为ROOT目录，直接使用web.xml中的路径访问即可，
+            否则会多一级目录，也就是abc.war的名称，这里是/abc
+         -->
+        <finalName>ROOT</finalName>
         <plugins>
             <!-- 非多个资源配置 start-->
             <plugin>
