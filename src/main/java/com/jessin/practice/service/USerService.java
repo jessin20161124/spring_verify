@@ -2,7 +2,9 @@ package com.jessin.practice.service;
 
 import com.jessin.practice.bean.User;
 import com.jessin.practice.mappers.UserDao;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,7 +21,11 @@ import javax.annotation.Resource;
  **/
 @Service
 @Slf4j
-public class UserService {
+public class USerService implements BeanNameAware {
+    /**
+     *
+     */
+    private String beanName;
 
     @Resource
     private UserDao userDao;
@@ -72,5 +78,19 @@ public class UserService {
     public User updateAccount2(User user) {
         log.info("更新db后再更新缓存");
         return user;
+    }
+
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
+
+    public String getBeanName() {
+        return beanName;
+    }
+
+    @NonNull
+    public String getNull() {
+        return null;
     }
 }

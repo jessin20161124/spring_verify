@@ -7,7 +7,7 @@ import com.jessin.practice.bean.User;
 import com.jessin.practice.event.HelloEvent;
 import com.jessin.practice.service.AbstractService;
 import com.jessin.practice.service.ChildService;
-import com.jessin.practice.service.UserService;
+import com.jessin.practice.service.USerService;
 import com.jessin.practice.service.factoryBean.ConnServer;
 import com.jessin.practice.service.test.BeanA;
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class HelloController {
     private Map<String, AbstractService> abstractServiceMap;
 
     @Resource
-    private UserService userService;
+    private USerService uSerService;
 
     @Resource
     private ConnServer connServer;
@@ -173,7 +173,7 @@ public class HelloController {
 
     /**
      * 外部是接口List，不可实例化，ModelAttributeMethodProcessor#createAttribute处理时会出错
-     * @param user
+     * @param userList
      * @return
      */
 //    @RequestMapping("/sayUserList")
@@ -182,14 +182,27 @@ public class HelloController {
 //        return user;
 //    }
 
+    @RequestMapping("/sayNameList")
+    @ResponseBody
+    public List<String> sayUserList(@RequestParam ArrayList<String> userList) {
+        return userList;
+    }
+
     /**
-     * curl -X POST -H "content-type: application/json;charset=utf-8" -d '[{"id":1,"birthday":"2018-09-29 20:07:00"},{"id":2,"birthday":"2018-09-29 20:07:00"}]}' http://localhost:8081/practice/sayUserList
+     * curl -X POST -H "content-type: application/json;charset=utf-8"
+     * -d '[{"id":1,"birthday":"2018-09-29 20:07:00"},{"id":2,"birthday":"2018-09-29 20:07:00"}]}'
+     * http://localhost:8081/practice/sayUserList
      * @param user
      * @return
      */
     @RequestMapping("/sayUserList")
     @ResponseBody
     public List<User> sayUserList(@RequestBody List<User> user) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return user;
     }
 
@@ -373,6 +386,6 @@ public class HelloController {
     @RequestMapping(value = "/helloUser")
     @ResponseBody
     public User helloUser(String name) {
-        return userService.query(name);
+        return uSerService.query(name);
     }
 }

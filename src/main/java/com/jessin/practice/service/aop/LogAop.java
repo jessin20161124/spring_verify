@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Slf4j
 public class LogAop {
-    @Pointcut("execution( * com.jessin..*.*Dao.*(..))")
+    @Pointcut("execution( * com.jessin..*.*Dao.*(..)) || execution( * com.jessin..*.*Mapper.*(..))")
     private void daoPointCut() {
 
     }

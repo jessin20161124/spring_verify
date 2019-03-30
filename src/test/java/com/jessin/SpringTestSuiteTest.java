@@ -1,13 +1,14 @@
 package com.jessin;
 
 import com.jessin.practice.bean.User;
-import com.jessin.practice.service.UserService;
+import com.jessin.practice.service.USerService;
+import lombok.Data;
+import lombok.NonNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 /**
  * @author zexin.guo
@@ -22,24 +23,51 @@ import javax.annotation.Resource;
 //@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 //------------
 public class SpringTestSuiteTest {
-    @Resource
-    private UserService userService;
+    @Autowired
+    private USerService uSerService;
 
     @Test
 //    @Transactional   //标明此方法需使用事务
 //    @Rollback(false)  //标明使用完此方法后事务不回滚,true时为回滚
     public void query() {
-        User user = userService.query("小明");
+        User user = uSerService.query("小明");
         System.out.println(user);
-        userService.updateAccount(user);
-        userService.reload();
+        uSerService.updateAccount(user);
+        uSerService.reload();
     }
 
     @Test
 //    @Transactional   //标明此方法需使用事务
 //    @Rollback(false)  //标明使用完此方法后事务不回滚,true时为回滚
     public void testAopNotValid() {
-        User user = userService.getAccountByName2("小明");
+        User user = uSerService.getAccountByName2("小明");
         System.out.println(user);
     }
+
+    /**
+     * 前两个字母大写，则使用整个简单类名
+     * 否则第一个字符小写
+     */
+    @Test
+    public void testBeanName() {
+        System.out.println("beanName为：" + uSerService.getBeanName());
+    }
+
+    /**
+     * 前两个字母大写，则使用整个简单类名
+     * 否则第一个字符小写
+     */
+    @Test
+    public void testNonNull() {
+        A a = new A(null);
+        a.setName(null);
+        System.out.println("beanName为：" + a);
+    }
 }
+
+@Data
+class A {
+    @NonNull
+    private String name;
+}
+

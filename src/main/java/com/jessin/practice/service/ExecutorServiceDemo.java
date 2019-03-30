@@ -29,6 +29,7 @@ public class ExecutorServiceDemo {
             return t;
         }
 
+        @Override
         public void uncaughtException(Thread thread, Throwable throwable) {
             logger.error("Uncaught Exception in thread " + thread.getName(), throwable);
         }
@@ -52,7 +53,8 @@ public class ExecutorServiceDemo {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    logger.info("hello world end，存活线程数目 : {}", executorService.getActiveCount());
+                    //throw new IllegalArgumentException("非法参数");
+                    //logger.info("hello world end，存活线程数目 : {}", executorService.getActiveCount());
                 }
             });
         }
