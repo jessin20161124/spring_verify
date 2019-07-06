@@ -804,7 +804,6 @@ public Object parsePropertyValue(Element ele, BeanDefinition bd, String property
 
 &nbsp;&nbsp;&nbsp;&nbsp;这几步骤的前后可以有自定义的beanPostProcessor进行扩展。
 15. spring使用BeanWrapperImpl来完成对一个bean的实例化，真正的实例是beanWrapper的getWrapperInstance，当调用setPropertyValues方法时将注入相关的属性，但必须是setter方法，与属性定义无关。BeanWrapper还实现了PropertyEditorRegistry，TypeConverter接口。
-![BeanWrapperImpl](http://fuwu.qunar.com/gongdan/attach/download?fileName=BeanWrapperImpl.png&uniqueName=file20181006105535634033)
 15. 默认使用DefaultListableBeanFactory和XmlApplicaztionContext来构造相应的容器。
 
 16. Tomcat容器启动点
@@ -856,7 +855,6 @@ graph TD
 26. 委托模式
 宿主A --创建--> 委托类B，入参为宿主A，B利用A工作。代理对被代理的对象最熟悉。
 27. 
-![TypeConverterDelegate类图](http://fuwu.qunar.com/gongdan/attach/download?fileName=typeConverterDelegate.png&uniqueName=file20181004193905708908))
 
 &nbsp;&nbsp;&nbsp;&nbsp;
 28. 策略模式的使用

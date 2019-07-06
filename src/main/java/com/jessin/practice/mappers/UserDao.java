@@ -10,4 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserDao {
     User selectUser();
+
+    int insertUser(User user);
+
 }

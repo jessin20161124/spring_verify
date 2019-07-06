@@ -375,7 +375,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throws BeansException {
 
         Object result = existingBean;
-        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+        List<BeanPostProcessor> beanPostProcessorList = getBeanPostProcessors();
+        for (BeanPostProcessor beanProcessor : beanPostProcessorList) {
             result = beanProcessor.postProcessBeforeInitialization(result, beanName);
             if (result == null) {
                 return result;
@@ -389,7 +390,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throws BeansException {
 
         Object result = existingBean;
-        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+        List<BeanPostProcessor> beanPostProcessorList = getBeanPostProcessors();
+        for (BeanPostProcessor beanProcessor : beanPostProcessorList) {
             result = beanProcessor.postProcessAfterInitialization(result, beanName);
             if (result == null) {
                 return result;

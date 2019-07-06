@@ -16,20 +16,16 @@
 
 package org.springframework.web.context.support;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.annotation.AnnotatedBeanDefinitionReader;
-import org.springframework.context.annotation.AnnotationConfigRegistry;
-import org.springframework.context.annotation.AnnotationConfigUtils;
-import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
-import org.springframework.context.annotation.ScopeMetadataResolver;
+import org.springframework.context.annotation.*;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.ContextLoader;
+
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * {@link org.springframework.web.context.WebApplicationContext WebApplicationContext}
@@ -186,7 +182,10 @@ public class AnnotationConfigWebApplicationContext extends AbstractRefreshableWe
 	 */
 	@Override
 	protected void loadBeanDefinitions(DefaultListableBeanFactory beanFactory) {
+		// TODO 注入所有注解后处理器
 		AnnotatedBeanDefinitionReader reader = getAnnotatedBeanDefinitionReader(beanFactory);
+		// TODO 只有扫描包时，才会注入所有注解后处理器，
+		// TODO 在ContextLoader和DispatcherServlet中均不会使用这种方式，使用的是setConfigLocation
 		ClassPathBeanDefinitionScanner scanner = getClassPathBeanDefinitionScanner(beanFactory);
 
 		BeanNameGenerator beanNameGenerator = getBeanNameGenerator();
@@ -207,6 +206,7 @@ public class AnnotationConfigWebApplicationContext extends AbstractRefreshableWe
 				logger.info("Registering annotated classes: [" +
 						StringUtils.collectionToCommaDelimitedString(this.annotatedClasses) + "]");
 			}
+			// TODO 注册该bean，将该class注册为bean
 			reader.register(this.annotatedClasses.toArray(new Class<?>[this.annotatedClasses.size()]));
 		}
 
@@ -222,6 +222,7 @@ public class AnnotationConfigWebApplicationContext extends AbstractRefreshableWe
 		if (configLocations != null) {
 			for (String configLocation : configLocations) {
 				try {
+					// TODO 将该configLocation(类全名)注册为bean
 					Class<?> clazz = getClassLoader().loadClass(configLocation);
 					if (logger.isInfoEnabled()) {
 						logger.info("Successfully resolved class for [" + configLocation + "]");

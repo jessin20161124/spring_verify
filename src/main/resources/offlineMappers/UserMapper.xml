@@ -5,4 +5,10 @@
     <select id="selectUser" resultType="user">
         select id,name,age from tb_user;
     </select>
+
+    <insert id="insertUser" parameterType="com.jessin.practice.bean.User">
+        insert into tb_user (name, age)
+        values (#{name}, #{age})
+    </insert>
+
 </mapper>

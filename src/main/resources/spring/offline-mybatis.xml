@@ -44,6 +44,7 @@
         <property name="maxWait" value="${offline.jdbc.maxWait}"/>
         <property name="validationQuery" value="select 1"/>
         <property name="filters" value="stat,slf4j" />
+        <property name="connectionInitSqls" value="set names utf8mb4"/>
     </bean>
 
 </beans>  

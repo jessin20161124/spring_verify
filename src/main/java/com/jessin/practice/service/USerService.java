@@ -41,6 +41,7 @@ public class USerService implements BeanNameAware {
 
     /**
      * 使用了一个缓存名叫accountCache，默认key为name参数的值
+     * 这里会先从缓存取，缓存没有再调用方法取，并设置到缓存中
      * @return
      */
     @Cacheable(value="accountCache")
@@ -92,5 +93,9 @@ public class USerService implements BeanNameAware {
     @NonNull
     public String getNull() {
         return null;
+    }
+
+    public boolean insertUser(User user) {
+       return userDao.insertUser(user) == 1;
     }
 }

@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @link https://shift-alt-ctrl.iteye.com/blog/2394366
  * @author zexin.guo
+ * @link https://shift-alt-ctrl.iteye.com/blog/2394366
  * @create 2019-02-13 下午9:24
  **/
 public class CommonLogService {
@@ -25,22 +25,22 @@ public class CommonLogService {
     }
 }
 
- class LoggerBuilder {
+class LoggerBuilder {
 
-    private static final Map<String,Logger> container = new HashMap<>();
+    private static final Map<String, Logger> container = new HashMap<>();
 
     public static Logger getLogger(String name) {
         Logger logger = container.get(name);
-        if(logger != null) {
+        if (logger != null) {
             return logger;
         }
         synchronized (LoggerBuilder.class) {
             logger = container.get(name);
-            if(logger != null) {
+            if (logger != null) {
                 return logger;
             }
             logger = build(name);
-            container.put(name,logger);
+            container.put(name, logger);
         }
         return logger;
     }
@@ -48,7 +48,7 @@ public class CommonLogService {
     private static Logger build(String name) {
         // 这个是logback的上下文，包含所有logger的缓存
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-        // 从这个LoggerContext拿出来的Logger，会添加到缓存中，并且遍历时会从最后子logger到父logger进行遍历，如com.qunar.flight -> com.qunar -> com
+        // 从这个LoggerContext拿出来的Logger，会添加到缓存中，并且遍历时会从最后子logger到父logger进行遍历，如com.xxx.flight -> com.xxx -> com
         // 对每个logger，写入日志到该logger的appender中，如果当中某个logger的additive为false，则停止，否则继续向父logger转发
         Logger logger = context.getLogger("FILE-" + name);
         // 是否向上传递，如果向上，则会打印出来
@@ -76,7 +76,7 @@ public class CommonLogService {
         // appender的名字
         appender.setName("FILE-" + name);
         // OptionHelper可以替代系统属性，如${catalina.base}
-        appender.setFile(OptionHelper.substVars("logs/web-log-" + name + ".log",context));
+        appender.setFile(OptionHelper.substVars("logs/web-log-" + name + ".log", context));
         appender.setAppend(true);
         appender.setPrudent(false);
 
@@ -90,7 +90,7 @@ public class CommonLogService {
 
         // 归档策略
         SizeAndTimeBasedRollingPolicy policy = new SizeAndTimeBasedRollingPolicy();
-        String fp = OptionHelper.substVars("logs/web-log-" + name + ".log.%d{yyyy-MM-dd}.%i",context);
+        String fp = OptionHelper.substVars("logs/web-log-" + name + ".log.%d{yyyy-MM-dd}.%i", context);
         policy.setMaxFileSize(FileSize.valueOf("128MB"));
         policy.setFileNamePattern(fp);
         policy.setMaxHistory(15);

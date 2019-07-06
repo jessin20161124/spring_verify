@@ -30,6 +30,9 @@ import org.springframework.web.servlet.mvc.method.annotation.CallableMethodRetur
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
@@ -41,6 +44,17 @@ import java.util.*;
 import java.util.concurrent.Callable;
 
 /**
+ * 1. 打包：
+ * cd ~/Documents/Program/Java/spring_verify
+ * mvn clean package -DskipTests
+ * 2. 复制到对应的webapp下，如果没有该目录，在需要先拷贝default，并重新命名目录
+ * cp target/ROOT.war ~/www/spring_verify/webapps/
+ * 3. debug的话，可以在idea中设置好断点，需要在启动tomcat的java参数中配置本地debug端口
+ * 4. 启动tomcat，启动过程中，要去IDEA启动debug模式
+ * /opt/apache-tomcat-8.0.28/bin/start_tomcat.sh ~/www/spring_verify
+ * 5. 查看应用日志：
+ * tail -f ~/www/spring_verify/logs/spring_verify.log
+ * <p>
  * Created by jessin on 17-7-22.
  */
 @Controller
@@ -104,11 +118,12 @@ public class HelloController {
     /**
      * 使用@RequestParam注解，表示使用RequestParamMethodHandlerResolver进行处理
      * 否则使用兜底的ModelAttributeHandlerResolver进行处理
-     *
+     * <p>
      * 另外，返回值如果没有标注@ResponseBody，则使用ModelAttributeHandlerResolver进行解析，
      * 这时会把返回值User放到ModelAndView中，但是没有View，所以会使用默认的view，也就是该url；
      * 由于没有注入视图解析器，默认从dispatchServlet.properties中获取到InternalResourceViewResolver得到
      * InternalResourceView，最后render时，由于资源不存在，所以出错了。。
+     *
      * @param user
      * @return
      */
@@ -123,9 +138,10 @@ public class HelloController {
      * 提前释放当前线程，交由其他线程处理复杂的任务，其他线程处理得到结果后，触发另一个线程将结果返回给浏览器，
      * 这一过程中response一直打开。
      * 在返回值处理器中处理
-     * @see CallableMethodReturnValueHandler
+     *
      * @param user
      * @return
+     * @see CallableMethodReturnValueHandler
      */
     @RequestMapping("/callableSayUser")
     @ResponseBody
@@ -143,9 +159,10 @@ public class HelloController {
      * http://localhost:8081/practice/asyncTaskSayUser?user=1:ming:2
      * 提前释放当前线程，交由其他线程处理复杂的任务，其他线程处理得到结果后，出发另一个线程将结果返回给浏览器，
      * 这一过程中response一直打开。
-     * @see AsyncTaskMethodReturnValueHandler 这个可以设置本地超时时间
+     *
      * @param user
      * @return
+     * @see AsyncTaskMethodReturnValueHandler 这个可以设置本地超时时间
      */
     @RequestMapping("/asyncTaskSayUser")
     @ResponseBody
@@ -173,6 +190,7 @@ public class HelloController {
 
     /**
      * 外部是接口List，不可实例化，ModelAttributeMethodProcessor#createAttribute处理时会出错
+     *
      * @param userList
      * @return
      */
@@ -181,7 +199,6 @@ public class HelloController {
 //    public List<User> sayUserList(List<User> user) {
 //        return user;
 //    }
-
     @RequestMapping("/sayNameList")
     @ResponseBody
     public List<String> sayUserList(@RequestParam ArrayList<String> userList) {
@@ -192,6 +209,7 @@ public class HelloController {
      * curl -X POST -H "content-type: application/json;charset=utf-8"
      * -d '[{"id":1,"birthday":"2018-09-29 20:07:00"},{"id":2,"birthday":"2018-09-29 20:07:00"}]}'
      * http://localhost:8081/practice/sayUserList
+     *
      * @param user
      * @return
      */
@@ -208,6 +226,7 @@ public class HelloController {
 
     /**
      * 外部是接口List，不可实例化，ModelAttributeMethodProcessor#createAttribute处理时会出错
+     *
      * @param friend
      * @return
      */
@@ -222,6 +241,7 @@ public class HelloController {
     /**
      * TODO bindingResult跟随在@Valid后面，且必须有，对应的参数解析器为：org.springframework.web.method.annotation.ErrorsMethodArgumentResolver
      * grep 'propertyName' --color=auto -C 50 log/spring_verify.log
+     *
      * @param user
      * @param abc
      * @return
@@ -265,6 +285,7 @@ public class HelloController {
 
     /**
      * TODO BeanA使用@Scope("prototype")注解，则applicationContext获取该bean时每次都会生成bean，不会缓存起来。必须调用getBean才能重新生成，依赖注入只进行一次。
+     *
      * @return
      */
     private BeanA getBeanA() {
@@ -318,6 +339,7 @@ public class HelloController {
 
     /**
      * ViewNameMethodReturnValueHandler进行处理，返回的字符串即为视图名，而@ModelAttribute会把参数放入model中，ｋey为user
+     *
      * @param user
      * @return
      */
@@ -328,6 +350,7 @@ public class HelloController {
 
     /**
      * 由StringHttpMessageConverter处理，abc含有中文时，将是乱码，因为返回值使用ISO8859-1编码，而前端使用UTF-8编码
+     *
      * @param abc
      * @return
      */
@@ -370,7 +393,8 @@ public class HelloController {
         map.put("error", "抛出异常了");
         return map;
     }
-    @RequestMapping(value = "/helloPost",method = RequestMethod.POST)
+
+    @RequestMapping(value = "/helloPost", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, String> helloPost(@RequestParam String hello) {
         LOGGER.info("入参为：{}", hello);
@@ -381,11 +405,42 @@ public class HelloController {
 
     /**
      * http://localhost:8081/practice/helloUser
+     *
      * @return
      */
     @RequestMapping(value = "/helloUser")
     @ResponseBody
     public User helloUser(String name) {
         return uSerService.query(name);
+    }
+
+
+
+    @RequestMapping(value = "/helloCookie")
+    @ResponseBody
+    public Cookie helloCookie(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        Cookie oldCookie = getOldCookie(httpServletRequest);
+        Cookie newCookie = generateNewCookie(new Random().nextInt() + "", 60 * 60 * 24 * 365);
+        httpServletResponse.addCookie(newCookie);
+        LOGGER.info("老cookie为：{}，新cookie：{}", oldCookie.getValue(), newCookie.getValue());
+        return newCookie;
+    }
+
+    public Cookie getOldCookie(HttpServletRequest httpServletRequest) {
+        Cookie[] cookies = httpServletRequest.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("ceshi")) {
+                return cookie;
+            }
+        }
+        return null;
+    }
+
+    public Cookie generateNewCookie(String userAccountCookie, int age) {
+        Cookie cookie = new Cookie("ceshi", userAccountCookie);
+        cookie.setMaxAge(age);
+        cookie.setPath("/");
+        cookie.setDomain("abc.xxx.com");
+        return cookie;
     }
 }

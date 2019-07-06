@@ -8,10 +8,7 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -105,5 +102,29 @@ public class StreamTest {
         stringStream.collect(toList());
         // 失败
         stringStream.collect(toList());
+    }
+
+    @Test
+    public void testBiConsumer() {
+//        BiConsumer<Integer, Integer> biConsumer = this::add;
+//        biConsumer.accept(1, 2);
+
+          BiConsumer<A, Integer> biConsumer1 = A::print;
+//        BiConsumer<A, Integer> biConsumer1 = this::add;
+
+        biConsumer1.accept(new A(), 10);
+    }
+
+    public void add(int a, int b) {
+        System.out.println(a + b);
+    }
+    public void add(A a, int b) {
+        a.print(b);
+    }
+
+    class A {
+        public void print(int a) {
+            System.out.println(a);
+        }
     }
 }

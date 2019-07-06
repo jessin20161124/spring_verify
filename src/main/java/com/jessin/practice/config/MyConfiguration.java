@@ -19,10 +19,11 @@ import javax.annotation.Resource;
 
 @Configuration
 // propertyResource只会将属性注入到当前环境中，只能从当前环境中取。
-@PropertySource("classpath:test.properties")
+@PropertySource({"classpath:test.properties", "classpath:jdbc.properties"})
 //@PropertySource("test1.properties")
 //@ImportResource("/abc.xml")
 //@Import(MyConfiguration.class)
+@Import(BeanConfiguration.class)
 @Slf4j
 public class MyConfiguration {
 
@@ -32,7 +33,9 @@ public class MyConfiguration {
 
     /**
      * 从值解析器中取值，如果有PropertySourcesPlaceholderConfigurer(
-     * <context:property-placeholder location="classpath*:/test.properties,classpath*:jdbc.properties" />)，则会先从环境变量中取，再从对应配置文件中取
+     * <context:property-placeholder location="classpath*:/test.properties,classpath*:jdbc.properties" />)，
+     * 则会先从环境变量中取，再从对应配置文件中取
+     * 所以在spring boot的应用中，需要先注入对应的BeanFactoryPostProcessor
      */
     @Value("${myName:default}")
     private String name;
@@ -43,12 +46,10 @@ public class MyConfiguration {
     /**
      * 入参一般用在new HelloServiceImpl的构造函数中
      * 参数属性自动注入
-     * @param childService
-     * @param child2Service
      * @return
      */
     @Bean
-    public HelloService getHelloService(ChildService childService, Child2Service child2Service) {
+    public HelloService getHelloService(/*ChildService childService, Child2Service child2Service*/) {
         this.child2Service = child2Service;
         this.childService = childService;
         log.info("configuration注入：{}，{}，name为：{}", childService, child2Service, name);

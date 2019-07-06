@@ -4,6 +4,7 @@ import com.jessin.practice.bean.User;
 import com.jessin.practice.service.USerService;
 import lombok.Data;
 import lombok.NonNull;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,17 @@ public class SpringTestSuiteTest {
         User user = uSerService.getAccountByName2("小明");
         System.out.println(user);
     }
+
+    @Test
+    public void insertUser() {
+        User user = new User();
+        user.setAge(1100);
+        user.setName("\uD83D\uDE0A");
+        System.out.println("----------------------------------------当前用户是：" + user);
+        boolean result = uSerService.insertUser(user);
+        Assert.assertTrue(result);
+    }
+
 
     /**
      * 前两个字母大写，则使用整个简单类名

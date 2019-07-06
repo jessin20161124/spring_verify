@@ -55,7 +55,7 @@ public class DefaultAopProxyFactory implements AopProxyFactory, Serializable {
 				throw new AopConfigException("TargetSource cannot determine target class: " +
 						"Either an interface or a target is required for proxy creation.");
 			}
-			// Spring bean中目标类不可能是接口，接口无法在创建时实例化
+			// Spring bean中目标类不可能是接口，接口无法在创建时实例化，实际是target.getClass()
 			if (targetClass.isInterface() || Proxy.isProxyClass(targetClass)) {
 				return new JdkDynamicAopProxy(config);
 			}

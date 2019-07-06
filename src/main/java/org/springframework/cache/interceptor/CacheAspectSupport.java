@@ -352,6 +352,7 @@ public abstract class CacheAspectSupport extends AbstractCacheInvoker
 		}
 
 		// Collect any explicit @CachePuts
+		// TODO cachePut操作，将结果put到缓存中
 		collectPutRequests(contexts.get(CachePutOperation.class), result.get(), cachePutRequests);
 
 		// Process any collected put requests, either from @CachePut or a @Cacheable miss

@@ -71,4 +71,9 @@ public class ResourceTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void test4() {
+        System.out.println(String.format("ha\nhh%n啦啦啦啦啦%n%nabc"));
+    }
 }

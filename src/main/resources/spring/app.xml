@@ -22,11 +22,14 @@
 
     <aop:aspectj-autoproxy proxy-target-class="true"/>
 
-    <context:component-scan base-package="com.jessin.practice.bean,com.jessin.practice.service,com.jessin.practice.bean,com.jessin.practice.listener,com.jessin.practice.config" >
+    <context:component-scan base-package="com.jessin.practice.bean,
+    com.jessin.practice.service,
+    com.jessin.practice.listener,
+    com.jessin.practice.config" >
 
     </context:component-scan>
     <!-- PropertyPlaceholderConfigurer是一个BeanFactoryPostProcessor，只在该容器中起作用，不可继承-->
-    <context:property-placeholder location="classpath*:/*.properties" />
+    <context:property-placeholder location="classpath*:*.properties" />
     <!-- 在XmlWebApplicationContext中，如果不加classpath，则是相对于ServletContext的 -->
     <util:properties id="config" location="classpath*:/test.properties"/>
 
@@ -58,7 +61,8 @@
 
     <!-- http://docs.spring.io/spring/docs/current/spring-framework-reference/html/scheduling.html -->
     <task:executor id="executor" pool-size="1-1" queue-capacity="1" keep-alive="120"/>
-    <!-- 这里也可以实现异步EventListener？且必须有注解@Async？-->
+    <!-- 这里确保标有注解@Async的方法能够生效。
+    EventListener默认会生效，在扫描注解注入时便注入了处理器-->
     <task:annotation-driven executor="executor" />
 
 
