@@ -45,17 +45,29 @@ class LoggerBuilder {
         return logger;
     }
 
+    /**
+     * 1. 这里的com是LoggerFactory.getLogger(completeClassName)中completeClassName的前缀，
+     * 那么这部分completeClassName的日志只走这个logger
+     * 2. logger additivity=false，则不会传递给父类展示日志，日志级别以当前logger的为准
+     * 3. 一旦additivity=true，如果当前没有指定appender，则当前不会输出，
+     * 如果父类有则父类会输出，当前logger的作用是指定level，输出对应级别的日志，父logger的level不生效
+     * 4. 当前不指定level，则会根据最近的父类的level来确定
+     * @param name
+     * @return
+     */
     private static Logger build(String name) {
         // 这个是logback的上下文，包含所有logger的缓存
         LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-        // 从这个LoggerContext拿出来的Logger，会添加到缓存中，并且遍历时会从最后子logger到父logger进行遍历，如com.xxx.flight -> com.xxx -> com
-        // 对每个logger，写入日志到该logger的appender中，如果当中某个logger的additive为false，则停止，否则继续向父logger转发
+        // 从这个LoggerContext拿出来的Logger，会添加到缓存中，并且遍历时会从最后子logger到父logger进行遍历，
+        // 如com.xxx.flight -> com.xxx -> com
+        // 对每个logger，写入日志到该logger的appender中，
+        // 如果当中某个logger的additive为false，则停止，否则继续向父logger转发
         Logger logger = context.getLogger("FILE-" + name);
         // 是否向上传递，如果向上，则会打印出来
         logger.setAdditive(true);
 
         /**
-         *  <appender name="default"
+         <appender name="default"
          class="ch.qos.logback.core.rolling.RollingFileAppender">
          <File>${log.dir}/spring_verify.log</File>
          <prudent>false</prudent>
@@ -104,6 +116,7 @@ class LoggerBuilder {
         // appender必须开启，且放最后
         appender.start();
         // 核心方法是添加appender，最后日志通过appender写入
+        // 一个logger可以有多个appender
         logger.addAppender(appender);
         return logger;
     }
