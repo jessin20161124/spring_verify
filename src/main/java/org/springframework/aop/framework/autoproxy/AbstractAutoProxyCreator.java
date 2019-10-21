@@ -337,7 +337,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			return bean;
 		}
 
-		// TODO 该类可以被增强
+		// TODO 该类可以被增强，advisor
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		// TODO 该bean可以被增强
 		if (specificInterceptors != DO_NOT_PROXY) {
@@ -448,6 +448,8 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 				proxyFactory.setProxyTargetClass(true);
 			}
 			else {
+				// TODO 如果没有指定proxyTargetClass为true，且当前类没有实现接口，
+				// TODO 则也会设置proxyTargetClass为true，自适应，指定了proxyTargetClass为true则是强制用cglib
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 		}

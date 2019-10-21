@@ -25,6 +25,7 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 
 /**
+ * TODO 默认使用这个事务工厂，保证同一个线程使用同一个connection
  * Creates a {@code SpringManagedTransaction}.
  *
  * @author Hunter Presnall

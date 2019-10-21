@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @create 2018-09-26 下午5:41
  **/
 @Component
-@Aspect
+//@Aspect
 @Slf4j
 public class LogAop {
     @Pointcut("execution( * com.jessin..*.*Dao.*(..)) || execution( * com.jessin..*.*Mapper.*(..))")

@@ -24,6 +24,7 @@ import java.util.Map;
 public class User implements InitializingBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
     private int id;
+    private String note;
     private List<String> car;
     // jsonformat必须配置时区，输出json时时间才会正确
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -122,6 +123,13 @@ public class User implements InitializingBean {
         LOGGER.info("postConstruct init user, name：{}", name);
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {

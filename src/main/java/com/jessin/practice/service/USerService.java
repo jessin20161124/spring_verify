@@ -9,6 +9,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -47,7 +49,7 @@ public class USerService implements BeanNameAware {
     @Cacheable(value="accountCache")
     public User query(String name) {
         log.info("从db查找user");
-        return userDao.selectUser();
+        return userDao.selectUserByName(name);
     }
 
     /**
@@ -56,9 +58,12 @@ public class USerService implements BeanNameAware {
      * @param user
      */
     @CacheEvict(value="accountCache",key="#user.getName()")
-    public void updateAccount(User user) {
-//
-        log.info("更新完成后再逐出该key");
+    @Transactional(rollbackFor = RuntimeException.class, propagation = Propagation.NEVER)
+    public int updateAccount(User user, Integer oldAge) {
+        int result = userDao.updateUserByName(user, oldAge);
+        log.info("更新完成后再逐出该key，更新结果为：{}", result);
+        log.info("更新后查询结果为：{}", userDao.selectUserByName(user.getName()));
+        return result;
     }
 
     /**
@@ -98,4 +103,5 @@ public class USerService implements BeanNameAware {
     public boolean insertUser(User user) {
        return userDao.insertUser(user) == 1;
     }
+
 }

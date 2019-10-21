@@ -7,6 +7,7 @@ import com.jessin.practice.bean.User;
 import com.jessin.practice.event.HelloEvent;
 import com.jessin.practice.service.AbstractService;
 import com.jessin.practice.service.ChildService;
+import com.jessin.practice.service.OutterUserService;
 import com.jessin.practice.service.USerService;
 import com.jessin.practice.service.factoryBean.ConnServer;
 import com.jessin.practice.service.test.BeanA;
@@ -68,6 +69,9 @@ public class HelloController {
 
     @Resource
     private USerService uSerService;
+
+    @Resource
+    private OutterUserService outterUserService;
 
     @Resource
     private ConnServer connServer;
@@ -442,5 +446,19 @@ public class HelloController {
         cookie.setPath("/");
         cookie.setDomain("abc.xxx.com");
         return cookie;
+    }
+
+    @RequestMapping("/testTransaction")
+    @ResponseBody
+    public String testTransaction(@RequestParam String note,
+            @RequestParam Integer age) {
+        String userName = "老铁";
+        User user = new User();
+        user.setAge(age);
+        user.setName(userName);
+        user.setNote(note);
+        new Thread(() -> {outterUserService.transaction1(userName);}).start();
+        new Thread(() -> {uSerService.updateAccount(user, null);}).start();
+        return "success";
     }
 }

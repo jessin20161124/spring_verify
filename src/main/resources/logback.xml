@@ -43,6 +43,10 @@
         </encoder>
     </appender>
 
+    <!-- TODO 注意logger必须正常，如getClass则为子类的名字，注意子类与父类不在同一个包 -->
+    <logger level="debug" name="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    </logger>
+
     <root level="info">
         <appender-ref ref="errorLogger"/>
         <appender-ref ref="default"/>

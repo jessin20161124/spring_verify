@@ -2,13 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.jessin.practice.mappers.UserDao">
 
-    <select id="selectUser" resultType="user">
-        select id,name,age from tb_user;
+    <select id="selectUserByName" resultType="user">
+        select id,name,age,note from tb_user
+        where name = #{name}
+
     </select>
 
+    <update id="updateUserByName">
+        update tb_user set age = #{user.age}, note=#{user.note}
+        where name = #{user.name}
+        <if test="oldAge != null">
+            and age = #{oldAge}
+        </if>
+    </update>
+
     <insert id="insertUser" parameterType="com.jessin.practice.bean.User">
-        insert into tb_user (name, age)
-        values (#{name}, #{age})
+        insert into tb_user (name, age, note)
+        values (#{name}, #{age}, #{note})
     </insert>
 
 </mapper>

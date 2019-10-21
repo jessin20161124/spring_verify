@@ -139,6 +139,10 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	}
 
 	/**
+	 * TODO 过滤出来的Advisor bean是否可用，
+	 * TODO 例如InfrastructureAdvisorAutoProxyCreator，只会扫spring内部使用的Advisor（role为基础架构类型），不会扫描业务的Advisor
+	 * TODO 当业务自己也使用AOP时，使用业务配置的creator，Infra将被覆盖掉，
+	 * TODO 具体见org.springframework.aop.config.AopConfigUtils#registerOrEscalateApcAsRequired(java.lang.Class, org.springframework.beans.factory.support.BeanDefinitionRegistry, java.lang.Object)
 	 * Return whether the Advisor bean with the given name is eligible
 	 * for proxying in the first place.
 	 * @param beanName the name of the Advisor bean

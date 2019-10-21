@@ -261,6 +261,7 @@ public abstract class TransactionSynchronizationManager {
 	}
 
 	/**
+	 * TODO 只能调用一次
 	 * Activate transaction synchronization for the current thread.
 	 * Called by a transaction manager on transaction begin.
 	 * @throws IllegalStateException if synchronization is already active

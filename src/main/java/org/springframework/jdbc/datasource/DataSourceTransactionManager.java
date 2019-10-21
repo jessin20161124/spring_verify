@@ -176,10 +176,13 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 	@Override
 	protected Object doGetTransaction() {
+		// TODO txObject代表事务对象，作为事务的上下文数据
 		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
 		txObject.setSavepointAllowed(isNestedTransactionAllowed());
+		// TODO 获取当前线程绑定在该datasource的jdbc connection，同一个线程jdbc connection是一样的
 		ConnectionHolder conHolder =
 				(ConnectionHolder) TransactionSynchronizationManager.getResource(this.dataSource);
+		// TODO conHolder可能为null
 		txObject.setConnectionHolder(conHolder, false);
 		return txObject;
 	}
@@ -201,6 +204,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		try {
 			if (txObject.getConnectionHolder() == null ||
 					txObject.getConnectionHolder().isSynchronizedWithTransaction()) {
+				// TODO 从数据源获取jdbc connection
 				Connection newCon = this.dataSource.getConnection();
 				if (logger.isDebugEnabled()) {
 					logger.debug("Acquired Connection [" + newCon + "] for JDBC transaction");
@@ -217,6 +221,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			// Switch to manual commit if necessary. This is very expensive in some JDBC drivers,
 			// so we don't want to do it unnecessarily (for example if we've explicitly
 			// configured the connection pool to set it already).
+			// TODO 如果是false就不用改啦，一般都是true
 			if (con.getAutoCommit()) {
 				txObject.setMustRestoreAutoCommit(true);
 				if (logger.isDebugEnabled()) {
@@ -224,6 +229,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 				}
 				con.setAutoCommit(false);
 			}
+			// TODO 表示事务进行中
 			txObject.getConnectionHolder().setTransactionActive(true);
 
 			int timeout = determineTimeout(definition);
@@ -233,6 +239,8 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 			// Bind the session holder to the thread.
 			if (txObject.isNewConnectionHolder()) {
+				// TODO 将connectionHolder保存到dataSource这个对象中，
+				// TODO 当线程进行数据库操作时，再从该datasource获取connection，保证使用的是同一个线程
 				TransactionSynchronizationManager.bindResource(getDataSource(), txObject.getConnectionHolder());
 			}
 		}
@@ -263,6 +271,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 	@Override
 	protected void doCommit(DefaultTransactionStatus status) {
+		// TODO transaction藏在status中，每个@Transactional得到的transaction都不一样
 		DataSourceTransactionObject txObject = (DataSourceTransactionObject) status.getTransaction();
 		Connection con = txObject.getConnectionHolder().getConnection();
 		if (status.isDebug()) {
@@ -334,6 +343,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 
 
 	/**
+	 * TODO 作为事务对象
 	 * DataSource transaction object, representing a ConnectionHolder.
 	 * Used as transaction object by DataSourceTransactionManager.
 	 */

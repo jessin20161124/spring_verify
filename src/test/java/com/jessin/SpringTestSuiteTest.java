@@ -33,7 +33,7 @@ public class SpringTestSuiteTest {
     public void query() {
         User user = uSerService.query("小明");
         System.out.println(user);
-        uSerService.updateAccount(user);
+        uSerService.updateAccount(user, null);
         uSerService.reload();
     }
 
@@ -50,11 +50,12 @@ public class SpringTestSuiteTest {
         User user = new User();
         user.setAge(1100);
         user.setName("\uD83D\uDE0A");
+        user.setName("老铁");
+        user.setNote("啊啊啊");
         System.out.println("----------------------------------------当前用户是：" + user);
         boolean result = uSerService.insertUser(user);
         Assert.assertTrue(result);
     }
-
 
     /**
      * 前两个字母大写，则使用整个简单类名

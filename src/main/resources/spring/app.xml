@@ -20,7 +20,10 @@
            http://www.springframework.org/schema/cache/spring-cache.xsd
 ">
 
-    <aop:aspectj-autoproxy proxy-target-class="true"/>
+    <!-- proxy-target-class="true"，则强制指定使用cglib，
+      否则自适应，如果有实现接口则使用jdk动态代理，否则使用cglib
+    -->
+    <aop:aspectj-autoproxy/>
 
     <context:component-scan base-package="com.jessin.practice.bean,
     com.jessin.practice.service,
