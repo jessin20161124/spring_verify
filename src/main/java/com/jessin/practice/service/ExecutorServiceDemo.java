@@ -35,7 +35,7 @@ public class ExecutorServiceDemo {
         }
     }
     public static void main(String[] args) throws Exception {
-        for (int i = 1; i <= 1000; i++) {
+        for (int i = 1; i <= 3; i++) {
             runForOneSecond();
         }
         executorService.shutdown();
@@ -53,7 +53,7 @@ public class ExecutorServiceDemo {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    //throw new IllegalArgumentException("非法参数");
+                    throw new IllegalArgumentException("非法参数");
                     //logger.info("hello world end，存活线程数目 : {}", executorService.getActiveCount());
                 }
             });

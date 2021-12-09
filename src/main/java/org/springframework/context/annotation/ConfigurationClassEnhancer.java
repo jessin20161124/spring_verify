@@ -71,6 +71,7 @@ import org.springframework.util.ReflectionUtils;
 class ConfigurationClassEnhancer {
 
 	// The callbacks to use. Note that these callbacks must be stateless.
+	// todo 普通方法呢，如果没有@Bean，会直接忽略？？？
 	private static final Callback[] CALLBACKS = new Callback[] {
 			new BeanMethodInterceptor(),
 			new BeanFactoryAwareMethodInterceptor(),
@@ -339,6 +340,7 @@ class ConfigurationClassEnhancer {
 				}
 			}
 
+			// todo 对于当前通过容器生成bean，直接调用的bean method，直接调用父类方法即可。
 			if (isCurrentlyInvokedFactoryMethod(beanMethod)) {
 				// The factory is calling the bean method in order to instantiate and register the bean
 				// (i.e. via a getBean() call) -> invoke the super implementation of the method to actually
@@ -353,9 +355,11 @@ class ConfigurationClassEnhancer {
 							"these container lifecycle issues; see @Bean javadoc for complete details.",
 							beanMethod.getDeclaringClass().getSimpleName(), beanMethod.getName()));
 				}
+				// todo 调用原始实现，如果原始实现里头，有调用this.otherBeanMethod，则也会走代理逻辑
 				return cglibMethodProxy.invokeSuper(enhancedConfigInstance, beanMethodArgs);
 			}
 			else {
+				// todo 对于间接调用的，从beanFactory获取
 				// The user (i.e. not the factory) is requesting this bean through a
 				// call to the bean method, direct or indirect. The bean may have already been
 				// marked as 'in creation' in certain autowiring scenarios; if so, temporarily

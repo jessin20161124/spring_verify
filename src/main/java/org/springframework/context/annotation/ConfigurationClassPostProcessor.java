@@ -240,6 +240,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			// Simply call processConfigurationClasses lazily at this point then.
 			processConfigBeanDefinitions((BeanDefinitionRegistry) beanFactory);
 		}
+		// todo 对容器类所有@Configuration进行cglib动态代理，允许内部互相调用，并改为从BeanFactory查找内嵌beanMethod
 		enhanceConfigurationClasses(beanFactory);
 	}
 
@@ -359,6 +360,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		Map<String, AbstractBeanDefinition> configBeanDefs = new LinkedHashMap<String, AbstractBeanDefinition>();
 		for (String beanName : beanFactory.getBeanDefinitionNames()) {
 			BeanDefinition beanDef = beanFactory.getBeanDefinition(beanName);
+			// todo 只对full模式的类生成代理
 			if (ConfigurationClassUtils.isFullConfigurationClass(beanDef)) {
 				if (!(beanDef instanceof AbstractBeanDefinition)) {
 					throw new BeanDefinitionStoreException("Cannot enhance @Configuration bean definition '" +
@@ -391,6 +393,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						logger.debug(String.format("Replacing bean definition '%s' existing class '%s' with " +
 								"enhanced class '%s'", entry.getKey(), configClass.getName(), enhancedClass.getName()));
 					}
+					// todo 替换beanClass为CGLib代理类
 					beanDef.setBeanClass(enhancedClass);
 				}
 			}

@@ -54,7 +54,9 @@ public class BeanFactoryAdvisorRetrievalHelper {
 		this.beanFactory = beanFactory;
 	}
 
+	public static void main(String[] args) {
 
+	}
 	/**
 	 * TODO 添加BeanFactory中的所有Advisor
 	 * Find all eligible Advisor beans in the current bean factory,

@@ -3,11 +3,14 @@ package com.jessin;
 import com.jessin.practice.service.HelloService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.springframework.cglib.core.DebuggingClassWriter;
 import org.springframework.cglib.proxy.*;
 
 import java.lang.reflect.Method;
 
 /**
+ * https://www.cnblogs.com/lvbinbin2yujie/p/10284316.html
+ * https://www.cxyzjd.com/article/z69183787/106878203
  * CGLIB使用
  * @author zexin.guo
  * @create 2018-10-03 下午3:43
@@ -17,13 +20,19 @@ public class EnhancerTest {
 
     @Test
     public void test1() {
+        System.setProperty(DebuggingClassWriter.DEBUG_LOCATION_PROPERTY, "/Users/jessin/Documents/program/java/spring_verify/target/cglib");
         // 所有方法都会被拦截，如toString/hashCode，逻辑在这里
         Callback callback = new MethodInterceptor() {
             @Override
             public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
                 log.info("before invoke : {}", method);
                 // 原来的方法调用，连接点
+                // 如果调用invoke(proxy)，则会不断调用自己，直至栈溢出
+                // @Configuration做法，内嵌会走增强
+                // 报错：Object result = methodProxy.invokeSuper(new EnhancerTest(), args);
                 Object result = methodProxy.invokeSuper(proxy, args);
+                // AOP做法，内嵌不会走增强
+                // Object result = methodProxy.invoke(target, args);
                 log.info("after invoke : {}", method);
                 return result;
             }
@@ -33,6 +42,8 @@ public class EnhancerTest {
         enhancerTest.test();
         log.info("hashcode : {}", enhancerTest.hashCode());
         log.info("judge is HelloService : {}", enhancerTest instanceof HelloService);
+        // 报错，需要在intercept中处理
+      //  ((HelloService)enhancerTest).hello();
     }
 
     private <T> T getProxy(Class<T> superClass, Callback callback) {
