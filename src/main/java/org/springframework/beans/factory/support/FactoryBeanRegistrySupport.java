@@ -92,7 +92,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 	 * @see org.springframework.beans.factory.FactoryBean#getObject()
 	 */
 	protected Object getObjectFromFactoryBean(FactoryBean<?> factory, String beanName, boolean shouldPostProcess) {
-		// 单例bean只取一次
+		// todo factoryBean处理
 		// 尝试从工厂缓存中获取bean
 		if (factory.isSingleton() && containsSingleton(beanName)) {
 			synchronized (getSingletonMutex()) {
@@ -108,7 +108,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
 						object = alreadyThere;
 					}
 					else {
-
+						// todo 对于业务定义的FactoryBean，最后调用afterInitialized....
 						if (object != null && shouldPostProcess) {
 							try {
 								object = postProcessObjectFromFactoryBean(object, beanName);

@@ -860,7 +860,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
         Class<?> handlerType = handlerMethod.getBeanType();
         Set<Method> methods = this.modelAttributeCache.get(handlerType);
         if (methods == null) {
-            // 含有@RequestMapping和@ModelAttribute注解的方法
+            // 含有@RequestMapping/@ModelAttribute注解的方法
             methods = MethodIntrospector.selectMethods(handlerType, MODEL_ATTRIBUTE_METHODS);
             this.modelAttributeCache.put(handlerType, methods);
         }

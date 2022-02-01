@@ -436,6 +436,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
 
 		if (this.beanFactory instanceof ConfigurableListableBeanFactory) {
+			// todo 暴露原先的beanClass
 			AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);
 		}
 
@@ -444,6 +445,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		proxyFactory.copyFrom(this);
 
 		if (!proxyFactory.isProxyTargetClass()) {
+			// todo 如果是cglib生成的类，继续使用cglib代理。
 			if (shouldProxyTargetClass(beanClass, beanName)) {
 				proxyFactory.setProxyTargetClass(true);
 			}

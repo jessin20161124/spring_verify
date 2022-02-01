@@ -55,6 +55,7 @@ public abstract class AbstractBeanFactoryAwareAdvisingPostProcessor extends Abst
 		}
 
 		ProxyFactory proxyFactory = super.prepareProxyFactory(bean, beanName);
+		// todo @Configuration的bean，原先使用的beanClass替换为cglib类增强了，
 		if (!proxyFactory.isProxyTargetClass() && this.beanFactory != null &&
 				AutoProxyUtils.shouldProxyTargetClass(this.beanFactory, beanName)) {
 			proxyFactory.setProxyTargetClass(true);

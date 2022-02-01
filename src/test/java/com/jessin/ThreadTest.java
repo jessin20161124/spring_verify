@@ -1,23 +1,25 @@
 package com.jessin;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 /**
  * @author zexin.guo
  * @create 2019-03-03 下午11:08
  **/
+@Slf4j
 public class ThreadTest {
     @Test
     public void test() {
         Runnable runnable = () -> {
-                System.out.println("hello world");
+                log.info("hello world");
                 throw new IllegalArgumentException("ha ha");
         };
          Thread th = new Thread(runnable);
          th.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
              @Override
              public void uncaughtException(Thread t, Throwable e) {
-                 System.out.println("出异常了");
+                 log.error("{}, 出异常了", t.getName(), e);
              }
          });
          th.start();

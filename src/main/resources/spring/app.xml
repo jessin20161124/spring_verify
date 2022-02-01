@@ -57,7 +57,7 @@
 
     <alias name="friend" alias="goodFriend"></alias>
 
-    <!-- 异步EventListener的实现，使用的话全部都是 -->
+    <!-- 异步EventListener的实现x，使用的话全部都是 -->
     <!--<bean id="applicationEventMulticaster" class="org.springframework.context.event.SimpleApplicationEventMulticaster">-->
         <!--<property name="taskExecutor" ref="executor"/>-->
     <!--</bean>-->

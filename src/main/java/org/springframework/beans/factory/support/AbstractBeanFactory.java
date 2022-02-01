@@ -481,7 +481,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					return typeToMatch.isAssignableFrom(targetClass);
 				}
 			}
-
+			// todo beanType需要进一步判断，如果是FactoryBean，则还要看#getObjectType()，见getTypeForFactoryBean
 			Class<?> beanType = predictBeanType(beanName, mbd, typesToMatch);
 			if (beanType == null) {
 				return false;
@@ -489,8 +489,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 			// Check bean class whether we're dealing with a FactoryBean.
 			if (FactoryBean.class.isAssignableFrom(beanType)) {
+				// todo isFactoryDereference解引用，返回的是FactoryBean
 				if (!BeanFactoryUtils.isFactoryDereference(name)) {
 					// If it's a FactoryBean, we want to look at what it creates, not the factory class.
+					// todo 需要看返回值目标类型
+					//      例如@Component中，@Bean方法，这里返回的是null....
 					beanType = getTypeForFactoryBean(beanName, mbd);
 					if (beanType == null) {
 						return false;
@@ -507,17 +510,29 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				}
 			}
 
+			// todo 不是FactoryBean，直接判断beanType是否可以赋值就可以了
 			return typeToMatch.isAssignableFrom(beanType);
 		}
 	}
+
 
 	@Override
 	public boolean isTypeMatch(String name, Class<?> typeToMatch) throws NoSuchBeanDefinitionException {
 		return isTypeMatch(name, ResolvableType.forRawClass(typeToMatch));
 	}
 
+	/**
+	 * todo 如果是FactoryBean类型，则最终返回的是其getObjectType()方法的，跟其泛化参数类型无关
+	 * 		对于@Component @Bean 然后返回FactoryBean类型的，提前获取bean类型，可能获取不到
+	 * 	    这里提前获取时，利用的是方法返回值，尽量避免加载bean，不一定准确。bean加载后，是准确的
+	 * 	    获取类型的有两个方法，getType和isTypeMatch
+	 * @param name the name of the bean to query
+	 * @return
+	 * @throws NoSuchBeanDefinitionException
+	 */
 	@Override
 	public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
+		// todo beanName去除了&，先获取到beanName，再根据name进行判断
 		String beanName = transformedBeanName(name);
 
 		// Check manually registered singletons.
@@ -532,6 +547,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 		}
 		else if (containsSingleton(beanName) && !containsBeanDefinition(beanName)) {
+			// todo 通过register注册进来的null的...
 			// null instance registered
 			return null;
 		}
@@ -1387,6 +1403,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 
 	/**
+	 *
 	 * Predict the eventual bean type (of the processed bean instance) for the
 	 * specified bean. Called by {@link #getType} and {@link #isTypeMatch}.
 	 * Does not need to handle FactoryBeans specifically, since it is only

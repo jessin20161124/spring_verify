@@ -271,12 +271,15 @@ class ConfigurationClassBeanDefinitionReader {
 		// However, if the bean method is an overloaded case on the same configuration class,
 		// preserve the existing bean definition.
 		if (existingBeanDef instanceof ConfigurationClassBeanDefinition) {
+			// todo 对于java config @Bean，beanName已经存在了，对于同一个类文件，以最开始的为准
+			//      不同类文件，以后续的为主
 			ConfigurationClassBeanDefinition ccbd = (ConfigurationClassBeanDefinition) existingBeanDef;
 			return (ccbd.getMetadata().getClassName().equals(beanMethod.getConfigurationClass().getMetadata().getClassName()));
 		}
 
-		// A bean definition resulting from a component scan can be silently overridden
-		// by an @Bean method, as of 4.2...
+		// todo A bean definition resulting from a component scan can be silently overridden
+		//      by an @Bean method, as of 4.2...
+		//      @Bean优先
 		if (existingBeanDef instanceof ScannedGenericBeanDefinition) {
 			return false;
 		}

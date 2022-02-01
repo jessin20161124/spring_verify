@@ -51,6 +51,7 @@ public abstract class BeanFactoryUtils {
 
 
 	/**
+	 * todo 解引用，返回的是FactoryBean
 	 * Return whether the given name is a factory dereference
 	 * (beginning with the factory dereference prefix).
 	 * @param name the name of the bean

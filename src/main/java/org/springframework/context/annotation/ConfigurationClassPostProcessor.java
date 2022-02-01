@@ -299,7 +299,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<BeanDefinitionHolder>(configCandidates);
 		Set<ConfigurationClass> alreadyParsed = new HashSet<ConfigurationClass>(configCandidates.size());
 		do {
-			// 解析成所有的ConfigurationClass
+			// todo 1、解析成所有的ConfigurationClass，包括其上的@import，以及@Bean method，全部解析并存到ConfigurationClass中
 			parser.parse(candidates);
 			parser.validate();
 
@@ -312,7 +312,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
-			// TODO 再把ConfigurationClass中的BeanMethod啥的注册到BeanDefinitionRegistry中，如@Import(ImportRegistrar)，则直接register
+			// TODO 2、再把ConfigurationClass中的BeanMethod啥的注册到BeanDefinitionRegistry中，
+			//       如@Import(ImportRegistrar)，则直接register
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
 
@@ -382,7 +383,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		ConfigurationClassEnhancer enhancer = new ConfigurationClassEnhancer();
 		for (Map.Entry<String, AbstractBeanDefinition> entry : configBeanDefs.entrySet()) {
 			AbstractBeanDefinition beanDef = entry.getValue();
-			// If a @Configuration class gets proxied, always proxy the target class
+			// todo If a @Configuration class gets proxied, always proxy the target class
 			beanDef.setAttribute(AutoProxyUtils.PRESERVE_TARGET_CLASS_ATTRIBUTE, Boolean.TRUE);
 			try {
 				// Set enhanced subclass of the user-specified bean class

@@ -425,6 +425,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // Make sure bean class is actually resolved at this point, and
         // clone the bean definition in case of a dynamically resolved Class
         // which cannot be stored in the shared merged bean definition.
+        // todo 在这里构建load class...
         Class<?> resolvedClass = resolveBeanClass(mbd, beanName);
         if (resolvedClass != null && !mbd.hasBeanClass() && mbd.getBeanClassName() != null) {
             mbdToUse = new RootBeanDefinition(mbd);
@@ -563,6 +564,17 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return exposedObject;
     }
 
+    /**
+     * 	 * todo 这里对于@Bean，通过方法签名的返回值类型，猜测返回的bean type
+     * 	 * 				对于FactoryBean，返回的也是对应的FactoryBean子类，
+     * 	 * 				例如ReferenceBean<UserService>，返回的是ReferenceBean，而不是UserService
+     * 	                注意，@Component中的@Bean，也是返回ReferenceBean
+     * @param beanName the name of the bean
+     * @param mbd the merged bean definition to determine the type for
+     * @param typesToMatch the types to match in case of internal type matching purposes
+     * (also signals that the returned {@code Class} will never be exposed to application code)
+     * @return
+     */
     @Override
     protected Class<?> predictBeanType(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch) {
         Class<?> targetType = determineTargetType(beanName, mbd, typesToMatch);
@@ -594,6 +606,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * @return the type for the bean if determinable, or {@code null} otherwise
      */
     protected Class<?> determineTargetType(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch) {
+        // todo 这个方法，仅仅是获取到@Bean方法返回值类型，不会包含其泛型信息，会load bean class
+        //      所以，对于接口类型为FactoryBean的，例如ReferenceBean<UserService>
+        //      返回的是ReferenceBean
+        //      所以还需要进一步判断，如果是FactoryBean，则还要看#getObjectType()，见getTypeForFactoryBean
+        //      resolveBeanClass可能得到@Component注册的FactoryBean，其有beanClassName字段
         Class<?> targetType = mbd.getTargetType();
         if (targetType == null) {
             targetType = (mbd.getFactoryMethodName() != null ? getTypeForFactoryMethod(beanName, mbd, typesToMatch) :
@@ -606,6 +623,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     /**
+     * todo 这个方法，仅仅是获取到@Bean方法返回值类型，不会包含其泛型信息，
+     *      所以，对于接口类型为FactoryBean的，目标类型拿不到的。要获取目标类型信息，可以通过下一个方法getTypeForFactoryBean
+     *      通过反射Method签名 返回值类型等信息获得。
      * Determine the target type for the given bean definition which is based on
      * a factory method. Only called if there is no singleton instance registered
      * for the target bean already.
@@ -640,6 +660,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             isStatic = false;
         } else {
             // Check declared factory method return type on bean class.
+            // todo 静态类型时 @Bean，beanClassName为其所在类
             factoryClass = resolveBeanClass(mbd, beanName, typesToMatch);
         }
 
@@ -694,6 +715,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                         }
                     }
                 } else {
+                    // todo 最近公共祖先
                     commonType = ClassUtils.determineCommonAncestor(factoryMethod.getReturnType(), commonType);
                 }
             }
@@ -755,14 +777,20 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     }
                 }
             }
+            // todo 可能获取不到，只是尽可能，例如@Component中，@Bean方法，由于factoryBean不是@Configuration，
+            //       这个时候还没有resolve BeanClass，所以，上面的分支不会走，这个开关直接返回
             // If not resolvable above and the referenced factory bean doesn't exist yet,
             // exit here - we don't want to force the creation of another bean just to
             // obtain a FactoryBean's object type...
+            // todo 如果当前factoryBeanName在创建中，则继续往下，否则直接返回了
             if (!isBeanEligibleForMetadataCaching(factoryBeanName)) {
                 return null;
             }
         }
 
+        // todo 对于静态方法，直接构建实例，调用getObjectType()，像static @Bean，@DubboReference，factoryBeanName=null，
+        //        返回的是null，因为构造函数中此时objectType()不一定有值...
+        //        同时，对于@Component类型的FactoryBean，factoryBeanName=null和factoryMethodName=null，也是通过这里构造的
         FactoryBean<?> fb = (mbd.isSingleton() ?
                 getSingletonFactoryBeanForTypeCheck(beanName, mbd) :
                 getNonSingletonFactoryBeanForTypeCheck(beanName, mbd));
@@ -935,6 +963,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     }
                 }
             }
+            // 如果上面bean为null，则下一次不会进来
             mbd.beforeInstantiationResolved = (bean != null);
         }
         return bean;
