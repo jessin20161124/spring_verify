@@ -345,6 +345,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 		}
 		for (TypeFilter tf : this.includeFilters) {
 			if (tf.match(metadataReader, this.metadataReaderFactory)) {
+				// todo 条件注解，不生效则剔除
 				return isConditionMatch(metadataReader);
 			}
 		}

@@ -179,6 +179,7 @@ class ConfigurationClassBeanDefinitionReader {
 			configClass.skippedBeanMethods.add(methodName);
 			return;
 		}
+		// todo 相同method name的也跳过，不支持
 		if (configClass.skippedBeanMethods.contains(methodName)) {
 			return;
 		}

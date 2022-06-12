@@ -9,20 +9,21 @@ import org.junit.Test;
  **/
 @Slf4j
 public class ThreadTest {
+
     @Test
     public void test() {
         Runnable runnable = () -> {
-                log.info("hello world");
-                throw new IllegalArgumentException("ha ha");
+            log.info("hello world");
+            throw new IllegalArgumentException("ha ha");
         };
-         Thread th = new Thread(runnable);
-         th.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-             @Override
-             public void uncaughtException(Thread t, Throwable e) {
-                 log.error("{}, 出异常了", t.getName(), e);
-             }
-         });
-         th.start();
+        Thread th = new Thread(runnable);
+        th.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                log.error("{}, 出异常了", t.getName(), e);
+            }
+        });
+        th.start();
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {

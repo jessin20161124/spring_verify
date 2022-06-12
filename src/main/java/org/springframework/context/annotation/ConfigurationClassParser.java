@@ -246,7 +246,8 @@ class ConfigurationClassParser {
 	 */
 	protected final SourceClass doProcessConfigurationClass(ConfigurationClass configClass, SourceClass sourceClass) throws IOException {
 		// Recursively process any member (nested) classes first
-		// todo 在扫描一个java config类之前，第一步先处理内部类并注册，注意内部类必须标记有@Component或者有@Bean method，然后再处理@Bean方法
+		// todo 在扫描一个java config类之前，第一步先处理内部类并注册，
+		//       注意内部类必须标记有@Component或者有@Bean method，然后再处理@Bean方法
 		processMemberClasses(configClass, sourceClass);
 
 		// Process any @PropertySource annotations

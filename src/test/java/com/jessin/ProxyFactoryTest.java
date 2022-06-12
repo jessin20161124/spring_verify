@@ -4,6 +4,7 @@ import com.jessin.practice.service.HelloService;
 import com.jessin.practice.service.advice.HelloBeforeAdvice;
 import com.jessin.practice.service.advice.WorldBeforeAdvice;
 import com.jessin.practice.service.impl.HelloServiceImpl;
+import java.util.Queue;
 import org.aopalliance.aop.Advice;
 import org.junit.Test;
 import org.springframework.aop.ClassFilter;
@@ -84,5 +85,6 @@ public class ProxyFactoryTest {
 
         HelloService helloService = (HelloService)proxyFactory.getProxy();
         helloService.hello();
+
     }
 }
