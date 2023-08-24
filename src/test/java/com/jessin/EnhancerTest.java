@@ -42,15 +42,16 @@ public class EnhancerTest {
         enhancerTest.test();
         log.info("hashcode : {}", enhancerTest.hashCode());
         log.info("judge is HelloService : {}", enhancerTest instanceof HelloService);
-        // 报错，需要在intercept中处理
+        // 报错，需要在intercept中处理，难道这里是标记接口？
       //  ((HelloService)enhancerTest).hello();
     }
 
     private <T> T getProxy(Class<T> superClass, Callback callback) {
         // 代理实例的获取
         Enhancer enhancer = new Enhancer();
-        // 设置需要创建子类的类，final/private方法不能被代理
+        // 设置需要创建子类的类，final/private方法不能被代理，这个接口不管用？
         enhancer.setInterfaces(new Class[] {HelloService.class});
+        // 需要创建的父类
         enhancer.setSuperclass(superClass);
         enhancer.setCallbackFilter(new CallbackFilter() {
             @Override
